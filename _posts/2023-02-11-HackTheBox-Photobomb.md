@@ -1,5 +1,5 @@
 ---
-date: 2023-02-11 16:31:03
+date: 2023-02-11 16:35:03
 layout: post
 title: HackTheBox - Photobomb
 
@@ -14,3 +14,4 @@ tags:
   - basics privilege escalation
 
 ---
+hi
