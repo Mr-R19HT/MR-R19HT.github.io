@@ -1,5 +1,5 @@
 ---
-date: 2023-02-11 16:40:03
+date: 2023-02-11 16:44:03
 layout: post
 title: HackTheBox - Photobomb
 
@@ -12,5 +12,4 @@ tags:
   - htb
   - command injection
   - basics privilege escalation
-
 ---
