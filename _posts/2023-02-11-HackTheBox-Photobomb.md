@@ -8,6 +8,8 @@ image: /assets/img/htb/photobomb/info.png
 optimized_image: /assets/img/htb/photobomb/info.png
 category: blog
 tags:
+  - hackthebox
+  - Photobomb
   - web vulnerabilites
   - htb
   - command injection
