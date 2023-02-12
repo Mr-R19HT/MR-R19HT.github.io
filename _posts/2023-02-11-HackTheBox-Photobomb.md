@@ -116,3 +116,37 @@ Bingoo, I got the user flag.
 
 # Privilege Escalation
 
+Use `sudo -l` this option will print out the commands allowed (and forbidden) the user on the current host. 
+
+![image](/assets/img/htb/photobomb/sudo.png)
+
+This shows the current user can use this script `/opt/cleanup.sh` as root.
+
+See the script to exploit it.
+
+![image](/assets/img/htb/photobomb/script.png)
+
+ The last line of the above script it is finding the filetype and it is executing it with root permission.
+ 
+ To exploit it do that call the `find` binary using this relative path instead of the absolute path. By creating a malicious `find`, and modifying the path to include the current working directory, I should be able to abuse this misconfiguration, and escalate our privileges to root.
+ 
+And that is known as a name [PATH-Variable-manipulation](https://systemweakness.com/linux-privilege-escalation-using-path-variable-manipulation-64325ab05469).
+
+Add the current working directory to PATH.
+
+![image](/assets/img/htb/photobomb/path.png)
+
+Create the malicious `find` binary and make it executable.
+
+![image](/assets/img/htb/photobomb/find.png)
+
+Now, Run the script `opt/cleanup.sh`. 
+
+Great, I become root.
+
+![image](/assets/img/htb/photobomb/who.png)
+
+Bingoo, I got the root flag.
+
+![image](/assets/img/htb/photobomb/root.png)
+
