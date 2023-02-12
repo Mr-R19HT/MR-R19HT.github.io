@@ -140,7 +140,7 @@ Create the malicious `find` binary and make it executable.
 
 ![image](/assets/img/htb/photobomb/find.png)
 
-Now, Run the script `opt/cleanup.sh`. 
+Now, Run the script `/opt/cleanup.sh`. 
 
 Great, I become root.
 
