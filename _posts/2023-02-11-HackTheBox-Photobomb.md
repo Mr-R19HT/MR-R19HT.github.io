@@ -150,3 +150,4 @@ Bingoo, I got the root flag.
 
 ![image](/assets/img/htb/photobomb/root.png)
 
+Thank you for reading and happy hacking🖤😈
