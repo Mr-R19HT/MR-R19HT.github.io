@@ -22,7 +22,7 @@ This machine is from easy level worth 20 points.
 IP: `10.10.11.182`
 
 # Scanning and Enumeration
-First thing add ip to to `/etc/hosts` file to allow any dns records.
+First thing add ip to `/etc/hosts` file to allow any dns records.
 
 ```bash
 nano /etc/hosts
