@@ -9,4 +9,4 @@ permalink: /about/
 
 # About
 
-I'm Mr.R!9HT, A Cyber Security Engineer, Interested in Red Teaming, Digital Forensics, adored programming & scripting. I made this blog for publishing a blog posts and writups about hacking and another things in Computer Engineering.
+Hi Everyone! My name is Ahmed Ayman(AKA:MR19HT) & I'm a Cybersecurity Engineer. Interested in Red Teaming and penetration testing. I participate in most CTF competitions. Sometimes I write articles about competitions and summarize technical topics, whether they are in the form of essays or mental maps, and all of this is available on my blog and GitHub. I worked on many software projects while studying computer engineering in different fields like digital image processing, software engineering, computer graphics, artificial intelligence and all those projects are on my GitHub.
