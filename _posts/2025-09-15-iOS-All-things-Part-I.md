@@ -1,5 +1,5 @@
 ---
-date: 2025-09-15 14:14:30
+date: 2025-09-15 14:16:30
 layout: post
 title: iOS All Things Part I
 
@@ -36,12 +36,12 @@ Now that we're warmed up, let's get a bit more specific. From a technical standp
 
 This process typically covers several core areas:
 
-  * Static Analysis (SAST): Examining the app's code without executing it, often by decompiling the IPA file, to find hardcoded secrets, insecure code patterns, and logic flaws.
+  * **Static Analysis (SAST):** Examining the app's code without executing it, often by decompiling the IPA file, to find hardcoded secrets, insecure code patterns, and logic flaws.
 
-  * Dynamic Analysis (DAST): Testing the app while it's running on a device or simulator. This includes intercepting network traffic (with tools like MITMproxy & Burp), inspecting runtime memory, and manipulating function calls to test for vulnerabilities in real-time.
+  * **Dynamic Analysis (DAST):** Testing the app while it's running on a device or simulator. This includes intercepting network traffic (with tools like MITMproxy & Burp), inspecting runtime memory, and manipulating function calls to test for vulnerabilities in real-time.
 
-  * Reverse Engineering: Using tools like Hopper or Ghidra to disassemble the application binary to understand its inner workings, bypass client-side protections, and uncover hidden functionality.
+  * **Reverse Engineering:** Using tools like Hopper or Ghidra to disassemble the application binary to understand its inner workings, bypass client-side protections, and uncover hidden functionality.
 
-  * Network Security: Assessing the encryption of data in transit (e.g., TLS implementation), testing API endpoints for common vulnerabilities, and validating certificate pinning.
+  * **Network Security:** Assessing the encryption of data in transit (e.g., TLS implementation), testing API endpoints for common vulnerabilities, and validating certificate pinning.
 
 The goal is to emulate a real-world attacker's methodology to discover and help remediate risks, ensuring the app adheres to security best practices and protects sensitive user data effectively.
