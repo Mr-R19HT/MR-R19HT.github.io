@@ -1,5 +1,5 @@
 ---
-date: 2025-09-15 17:54:30
+date: 2025-09-15 19:10:30
 layout: post
 title: iOS All Things Part I
 
@@ -62,3 +62,57 @@ The fourth layer is the **Cocoa Touch Layer**. This is the layer that users dire
 > **Important Note:** Apple's iOS is a closed-source environment, unlike Android. You cannot install a modified iOS system because the hardware will reject it. All hardware components are cryptographically signed by Apple. Only the original iOS system has the correct digital certificate to communicate with the signed hardware. During boot, a "secure boot chain" process validates the iOS signature. If the signature is valid, the system boots; if not, it fails. This ensures only genuine Apple software can run on the device.
 
 ![image](/assets/img/ios-pentesting/Part-I/layers-ios-arch.png)
+
+## IPA Architecture
+An IPA file is the application package format for iOS, functionally equivalent to an APK package on Android.
+When you extract an IPA package (e.g., test.ipa), you obtain its core contents. The key components include:
+
+### Info.plist
+This is the Information Property List file, which serves a role similar to the AndroidManifest.xml in Android. It contains crucial metadata about the application, including:
+
+* The application's display name (CFBundleDisplayName)
+* The bundle identifier (CFBundleIdentifier)
+* The minimum iOS version it requires to run (MinimumOSVersion)
+* The application's version and build numbers
+
+### The Executable (Mach-O Binary)
+Extracting the IPA yields the main application executable. This is a Mach-O (Mach Object) file. This binary is the compiled, machine-code version of the application's source code. Unlike a decompiled Android APK, which can often yield readable Java or Kotlin code, this Mach-O binary contains compiled code that cannot be directly read. To analyze it, you must use reverse engineering tools like Ghidra, Hopper Disassembler, or IDA Pro to disassemble it into assembly code. The goal is to analyze this assembly to understand the program's logic and perform dynamic analysis during runtime.
+
+This executable is protected by modern security controls such as:
+
+* **ASLR (Address Space Layout Randomization):** Randomizes memory addresses to make exploits unreliable.
+* **DEP/NX (Data Execution Prevention/No-eXecute):** Marks certain memory segments as non-executable, preventing code from running in data regions.
+
+> **Important Tip:** The Decryption Hurdle of Any application downloaded from the official App Store has its main binary encrypted by Apple to protect intellectual property. If you try to analyze an App Store app directly with a disassembler, the tools will fail because they cannot read the encrypted code. To bypass this, a common technique is to run the app on a jailbroken device and dump the decrypted binary from memory (using tool like frida-ios-dump) before performing static analysis.
+
+### Frameworks Folder
+This directory contains the libraries the application depends on. This includes:
+
+* **Dynamic Libraries:** Custom frameworks developed for the app's specific needs.
+* **System Libraries:** Built-in iOS libraries (like libc.dylib) that provide standard functions.
+
+### Embedded.mobileprovision 
+This is a provisioning profile file. It contains the code-signing certificates and entitlements that authorize the app to run on specific devices or use certain Apple services. It also defines security policies and is crucial for understanding the app's capabilities.
+
+### Sandbox and Permissions (Entitlements)
+**Sandbox**: The core mechanism that prevents applications from accessing each other's data. This is a mandatory access control system enforced by the iOS kernel that isolates each application into its own dedicated container. This design ensures that an app cannot read, write, or modify the contents of any other app's container.
+
+This isolation is physically implemented through three primary directory structures on the filesystem:
+
+* **The System Application Container** (/var/Applications/): This path contains the bundles for Apple's pre-installed system applications, which are separate from user-installed apps.
+* **The App Bundle Container** (/var/containers/Bundle/Application/): This directory houses the actual application package (the .app folder) for all user-installed apps. Its contents are primarily read-only and include the application's compiled binary, embedded resources, frameworks, and its Info.plist file.
+* **The Data Container** (/var/mobile/Containers/Data/Application/):
+This is the most important directory for an app's dynamic data. Each app has a corresponding folder here for its read-write data, including user documents, databases, preferences, and caches. This directory is the strict equivalent of Android's /data/data/ path and is rigorously protected from access by other apps.
+
+**Permissions (Entitlements)**: The sandbox acts as a default-deny prison for applications. Entitlements are the signed permissions—embedded in the app's code signature and provisioning profile that grant an app specific exceptions to these restrictions. They are the legal passes that allow an app to access protected resources like the camera, microphone, or network, outside of its own container.
+
+Examples of Entitlements:
+
+* com.apple.security.network.client → Allows outgoing network connections.
+* com.apple.security.device.camera → Allows access to the camera.
+* com.apple.security.device.microphone → Allows access to the microphone.
+* com.apple.security.device.bluetooth → Allows access to Bluetooth.
+
+![image](/assets/img/ios-pentesting/Part-I/ipa-arch.jpg)
+
+
