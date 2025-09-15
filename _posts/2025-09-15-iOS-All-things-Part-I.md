@@ -19,7 +19,7 @@ tags:
 1. Intro
 2. iOS Architecture
 3. IPA Architecture
-4. Swift Programming
+4. Programming iOS Apps
 5. Types of Jailbreaks
 6. Push & Pull ipa Package
 7. Setup burp
@@ -115,4 +115,21 @@ Examples of Entitlements:
 
 ![image](/assets/img/ios-pentesting/Part-I/ipa-arch.jpg)
 
+## Programming iOS Apps
+Developing applications for iOS is primarily done using two programming languages: Objective-C and Swift.
+
+* Objective-C: This is an object-oriented programming language built as an extension of the standard C language. It was the primary language for iOS and macOS development for many years. While still maintained and used, especially in older codebases, it has largely been superseded by Swift for new projects.
+
+* Swift: Introduced by Apple in 2014, Swift is a modern, fast, and type-safe programming language designed specifically for iOS, macOS, and other Apple ecosystem development. Its cleaner syntax and focus on safety make it the current recommended and most popular language for building new iOS applications.
+
+The Primary Development Tool: Xcode
+
+The central hub for iOS development is Xcode, which is directly comparable to Android Studio for Android development.
+
+A Quick Tour of Swift:
+
+**Variable & constants**
+Swift uses let to declare constants and var to declare variables. Similar to languages like C, Swift uses these identifiers to store and refer to values in memory.
+
+![image](/assets/img/ios-pentesting/Part-I/var-&-constant.png)
 
