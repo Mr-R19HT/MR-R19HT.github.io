@@ -1,5 +1,5 @@
 ---
-date: 2025-09-17 20:55:30
+date: 2025-09-17 01:25:30
 layout: post
 title: iOS All The Things - Part I
 
@@ -129,6 +129,7 @@ The central hub for iOS development is Xcode, which is directly comparable to An
 A Quick Tour of Swift:
 
 **Variable & constants**
+
 Swift uses let to declare constants and var to declare variables. Similar to languages like C, Swift uses these identifiers to store and refer to values in memory.
 
 ![image](/assets/img/ios-pentesting/Part-I/var-&-constant.png)
@@ -138,5 +139,6 @@ Swift is a type-safe language, which means it needs to know what type of data a 
 ![image](/assets/img/ios-pentesting/Part-I/type.png)
 
 **Control Statements**
+
 Swift manages program flow with control statements like if, switch, and loops.
 
