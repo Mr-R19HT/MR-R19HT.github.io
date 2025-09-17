@@ -1,5 +1,5 @@
 ---
-date: 2025-09-17 03:05:30
+date: 2025-09-17 03:09:30
 layout: post
 title: iOS All The Things - Part I
 
@@ -16,10 +16,10 @@ tags:
 ---
 
 # Agenda of iOS Pentesting:
-1. [Intro](#Intro)
-2. [iOS Architecture](#iOS-Architecture)
-3. [IPA Architecture](#IPA-Architecture)
-4. [Programming iOS Apps](#Programming-iOS-Apps)
+1. [Intro](#intro)
+2. [iOS Architecture](#ios-architecture)
+3. [IPA Architecture](#ipa-architecture)
+4. [Programming iOS Apps](#programming-ios-apps)
 5. Types of Jailbreaks
 6. Push & Pull ipa Package
 7. Setup burp
