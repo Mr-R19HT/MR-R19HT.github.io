@@ -1,5 +1,5 @@
 ---
-date: 2025-09-17 01:28:30
+date: 2025-09-17 01:35:30
 layout: post
 title: iOS All The Things - Part I
 
@@ -130,9 +130,20 @@ A Quick Tour of Swift:
 
 **Variable & constants**
 
-Swift uses let to declare constants and var to declare variables. Similar to languages like C, Swift uses these identifiers to store and refer to values in memory.
+Swift uses `let` to declare constants and `var` to declare variables. Similar to languages like C, Swift uses these identifiers to store and refer to values in memory.
 
-![image](/assets/img/ios-pentesting/Part-I/var-&-constant.png)
+```Swift
+import Foundation
+
+// Declare a variable that can change its value
+var myVariable = 42
+myVariable = 50
+
+// Declare a constant that cannot be changed
+let myConstant = 42
+// myConstant = 50  // This would cause a compile-time error
+
+```
 
 Swift is a type-safe language, which means it needs to know what type of data a variable can hold. While it can often infer the type automatically (called type inference), you can also explicitly specify it during declaration to ensure precision and clarity.
 
