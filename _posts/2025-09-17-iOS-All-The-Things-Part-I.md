@@ -1,5 +1,5 @@
 ---
-date: 2025-09-17 01:35:30
+date: 2025-09-17 03:05:30
 layout: post
 title: iOS All The Things - Part I
 
@@ -16,10 +16,10 @@ tags:
 ---
 
 # Agenda of iOS Pentesting:
-1. Intro
-2. iOS Architecture
-3. IPA Architecture
-4. Programming iOS Apps
+1. [Intro](#Intro)
+2. [iOS Architecture](#iOS-Architecture)
+3. [IPA Architecture](#IPA-Architecture)
+4. [Programming iOS Apps](#Programming-iOS-Apps)
 5. Types of Jailbreaks
 6. Push & Pull ipa Package
 7. Setup burp
@@ -28,7 +28,7 @@ tags:
 ## Intro
 Hey Geeks, and welcome to our ultimate guide! Ever wondered how hackers find weaknesses in ios apps, and how we can stop them? You're in the right place.
 
-This article is your complete roadmap, split into four easy-to-follow parts. We'll break down everything about iOS penetration testing, from the basic concepts to the advanced tricks. And the best part? We'll finish with a hands-on lab where we'll solve challenges together, step-by-step.
+This article is your complete roadmap, divided into more than one easy-to-follow part. We'll break down everything about iOS penetration testing, from the basic concepts to the advanced tricks. And the best part? We'll finish with a hands-on lab where we'll solve challenges together, step-by-step.
 
 So, whether you're just curious or building your skills, let's dive in and unlock the secrets of iOS security!
 
@@ -118,9 +118,9 @@ Examples of Entitlements:
 ## Programming iOS Apps
 Developing applications for iOS is primarily done using two programming languages: Objective-C and Swift.
 
-* Objective-C: This is an object-oriented programming language built as an extension of the standard C language. It was the primary language for iOS and macOS development for many years. While still maintained and used, especially in older codebases, it has largely been superseded by Swift for new projects.
+* **Objective-C:** This is an object-oriented programming language built as an extension of the standard C language. It was the primary language for iOS and macOS development for many years. While still maintained and used, especially in older codebases, it has largely been superseded by Swift for new projects.
 
-* Swift: Introduced by Apple in 2014, Swift is a modern, fast, and type-safe programming language designed specifically for iOS, macOS, and other Apple ecosystem development. Its cleaner syntax and focus on safety make it the current recommended and most popular language for building new iOS applications.
+* **Swift:** Introduced by Apple in 2014, Swift is a modern, fast, and type-safe programming language designed specifically for iOS, macOS, and other Apple ecosystem development. Its cleaner syntax and focus on safety make it the current recommended and most popular language for building new iOS applications.
 
 The Primary Development Tool: Xcode
 
@@ -143,13 +143,96 @@ myVariable = 50
 let myConstant = 42
 // myConstant = 50  // This would cause a compile-time error
 
+print(myVariable) // equal 50
+print(myVariable + myConstant) // equal 92
 ```
 
 Swift is a type-safe language, which means it needs to know what type of data a variable can hold. While it can often infer the type automatically (called type inference), you can also explicitly specify it during declaration to ensure precision and clarity.
 
-![image](/assets/img/ios-pentesting/Part-I/type.png)
+```Swift
+import Foundation
+
+//Delcare the type
+var test:String = "Ahmed"
+print(test) //Ahmed 
+```
 
 **Control Statements**
 
-Swift manages program flow with control statements like if, switch, and loops.
+Swift provides powerful control flow statements that let you conditionally execute code. The `if` statement is used for simple checks, while the `switch` statement is exceptionally powerful in Swift, capable of matching complex patterns and conditions far beyond simple integer values.
 
+```Swift
+import Foundation
+
+// If statements
+let score = 85
+if score > 80 {
+    print("Great job!")
+}
+
+// For-in loop over an array
+let names = ["Ahmed", "Ayman", "Ahmed"]
+for name in names {
+    print("Hello, \(name)!")
+}
+
+// Switch statement (powerful in Swift)
+let vegetable = "red pepper"
+switch vegetable {
+case "celery":
+    print("Add some raisins.")
+case "cucumber", "watercress":
+    print("That would make a good tea sandwich.")
+case let x where x.hasSuffix("pepper"):
+    print("Is it a spicy \(x)?") // This will print for "red pepper"
+default:
+    print("Everything tastes good in soup.")
+}
+```
+
+**Function**
+
+In Swift, a function is a self-contained block of code designed to perform a specific task, making it a fundamental building block for organizing and reusing code in iOS applications.
+
+```Swift
+import Foundation
+
+// Function
+func test(x:String , y:String) -> String{
+    return "Hi, \(x) \(y)"
+}
+
+var z = test(x:"Ahmed" , y:"Ayman")
+print(z) // Hi, Ahmed Ayman
+```
+**Class**
+
+In Swift, a class is a blueprint for creating objects. It encapsulates data (in the form of properties) and behavior (in the form of methods) that together describe a specific concept or entity.
+
+```Swift
+import Foundation
+
+// Class
+class test{
+    var num = 0
+    func x() -> String{
+        return "Done!"
+    }
+}
+
+// Variable y is inherited all properties belong to class test()
+var y = test()
+// Can use any method or object in that class
+print(y.num) // 0
+print(y.x()) // Done!
+```
+
+> **Important Advice:** A highly effective way to sharpen your penetration testing skills is to analyze intentionally vulnerable applications. Apps like DIVA-v2 are designed with security flaws for educational purposes.
+
+That concludes Part one of our journey into iOS pentesting. We've laid the foundation by exploring the architecture, the IPA structure, and Swift Programming.
+
+Just like Chrollo meticulously studies his opponents' abilities before a fight, a successful pentester must first master the known system to exploit its unknown weaknesses.
+
+Stay tuned. The real mission is about to begin.
+
+> **Quote From Chrollo:** In order to understand the unknown, one must first become acquainted with the known.
