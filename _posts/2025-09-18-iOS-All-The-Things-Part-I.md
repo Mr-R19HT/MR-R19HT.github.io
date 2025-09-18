@@ -1,11 +1,11 @@
 ---
-date: 2025-09-17 03:13:30
+date: 2025-09-18 12:19:30
 layout: post
 title: iOS All The Things - Part I
 
 description: 
-image: /assets/img/ios-pentesting/Part-I/cover-part1.jpeg
-optimized_image: /assets/img/ios-pentesting/Part-I/cover-part1.jpeg
+image: /assets/img/ios-pentesting/Part-I/cover1.png
+optimized_image: /assets/img/ios-pentesting/Part-I/cover1.png
 category: blog
 tags:
   - iOS Pentesting
@@ -21,10 +21,7 @@ tags:
 3. [IPA Architecture](#ipa-architecture)
 4. [Programming iOS Apps](#programming-ios-apps)
 5. [Conclusion](#conclusion)
-6. Types of Jailbreaks
-7. Push & Pull ipa Package
-8. Setup burp
-9. Tools
+
 
 ## Intro
 Hey Geeks, and welcome to our ultimate guide! Ever wondered how hackers find weaknesses in ios apps, and how we can stop them? You're in the right place.
