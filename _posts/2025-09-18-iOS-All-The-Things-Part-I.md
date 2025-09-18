@@ -117,7 +117,7 @@ Examples of Entitlements:
 Developing applications for iOS is primarily done using two programming languages: Objective-C and Swift.
 
 | Languages     | Definition                                                                                                                                            |
-|---------------|-------------------------------------------------------------------------------------------------------------------------------------------------------|
+|-----------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Objective-C                 | This is an object-oriented programming language built as an extension of the standard C language. It was the primary language for iOS and macOS development for many years. While still maintained and used, especially in older codebases, it has largely been superseded by Swift for new projects.
 | Swift                       | Introduced by Apple in 2014, Swift is a modern, fast, and type-safe programming language designed specifically for iOS, macOS, and other Apple ecosystem development. Its cleaner syntax and focus on safety make it the current recommended and most popular language for building new iOS applications.| 
 
