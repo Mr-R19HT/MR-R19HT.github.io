@@ -1,5 +1,5 @@
 ---
-date: 2025-09-18 14:42:30
+date: 2025-09-18 14:50:30
 layout: post
 title: iOS All The Things - Part I
 
@@ -45,6 +45,9 @@ This process typically covers several core areas:
 The goal is to emulate a real-world attacker's methodology to discover and help remediate risks, ensuring the app adheres to security best practices and protects sensitive user data effectively.
 
 ## iOS Architecture
+
+![image](/assets/img/ios-pentesting/Part-I/layers-ios-arch.png)
+
 The first layer is the **Core OS Layer**. It is based on a Unix-like kernel, from which iOS inherits powerful low-level features and capabilities, such as a command-line interface and shell.
 
 This layer acts as the direct conduit to the device's hardware components, including Bluetooth, Wi-Fi, and various sensors. These components are accessed through secure, structured APIs.
@@ -59,11 +62,12 @@ The fourth layer is the **Cocoa Touch Layer**. This is the layer that users dire
 
 > **Important Note:** Apple's iOS is a closed-source environment, unlike Android. You cannot install a modified iOS system because the hardware will reject it. All hardware components are cryptographically signed by Apple. Only the original iOS system has the correct digital certificate to communicate with the signed hardware. During boot, a "secure boot chain" process validates the iOS signature. If the signature is valid, the system boots; if not, it fails. This ensures only genuine Apple software can run on the device.
 
-![image](/assets/img/ios-pentesting/Part-I/layers-ios-arch.png)
 
 ## IPA Architecture
 An IPA file is the application package format for iOS, functionally equivalent to an APK package on Android.
 When you extract an IPA package (e.g., test.ipa), you obtain its core contents. The key components include:
+
+![image](/assets/img/ios-pentesting/Part-I/ipa-arch.jpg)
 
 ##### Info.plist
 This is the Information Property List file, which serves a role similar to the AndroidManifest.xml in Android. It contains crucial metadata about the application, including:
@@ -111,20 +115,16 @@ Examples of Entitlements:
 * com.apple.security.device.microphone → Allows access to the microphone.
 * com.apple.security.device.bluetooth → Allows access to Bluetooth.
 
-![image](/assets/img/ios-pentesting/Part-I/ipa-arch.jpg)
+
 
 ## Programming iOS Apps
 Developing applications for iOS is primarily done using two programming languages: Objective-C and Swift.
 
-| Languages     | Definition                                                                                                                                            |
-|-----------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Objective-C                 | This is an object-oriented programming language built as an extension of the standard C language. It was the primary language for iOS and macOS development for many years. While still maintained and used, especially in older codebases, it has largely been superseded by Swift for new projects.
-| Swift                       | Introduced by Apple in 2014, Swift is a modern, fast, and type-safe programming language designed specifically for iOS, macOS, and other Apple ecosystem development. Its cleaner syntax and focus on safety make it the current recommended and most popular language for building new iOS applications.| 
+| Language | Definition |
+|----------|------------|
+| **Objective-C** | This is an object-oriented programming language built as an extension of the standard C language. It was the primary language for iOS and macOS development for many years. While still maintained and used, especially in older codebases, it has largely been superseded by Swift for new projects. |
+| **Swift** | Introduced by Apple in 2014, Swift is a modern, fast, and type-safe programming language designed specifically for iOS, macOS, and other Apple ecosystem development. Its cleaner syntax and focus on safety make it the current recommended and most popular language for building new iOS applications. |
 
-
-* **Objective-C:** This is an object-oriented programming language built as an extension of the standard C language. It was the primary language for iOS and macOS development for many years. While still maintained and used, especially in older codebases, it has largely been superseded by Swift for new projects.
-
-* **Swift:** Introduced by Apple in 2014, Swift is a modern, fast, and type-safe programming language designed specifically for iOS, macOS, and other Apple ecosystem development. Its cleaner syntax and focus on safety make it the current recommended and most popular language for building new iOS applications.
 
 The Primary Development Tool: Xcode
 
