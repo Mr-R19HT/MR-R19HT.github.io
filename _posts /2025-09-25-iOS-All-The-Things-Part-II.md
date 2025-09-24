@@ -1,5 +1,5 @@
 ---
-date: 2025-09-25 23:25:15
+date: 2025-09-25 23:30:15
 layout: post
 title: iOS All The Things - Part II
 
@@ -80,7 +80,7 @@ d. **Semi-Untethered:** if reboot the device , the ios is return to normal statu
 
 Using that [website](https://canijailbreak.com/) to know what’s that tool compatible with version of ios device to make jailbreak.
 
-```
+
 ## Pull & Push IPA Packages
 
 Once your iOS device is successfully jailbroken, the next step is to install a package manager like Sileo, Cydia, or Zebra. Think of this as an "alternative App Store" specifically for jailbroken devices, where you can find powerful tools and tweaks that Apple doesn't allow.
@@ -128,7 +128,7 @@ To move the extracted IPA file from your iOS device to your computer, you need a
   ```bash
   scp mobile@[device_ip]:/var/mobile/Documents/YourAppName.ipa /path/on/your/kali/
   ```
- ```
+ 
 * **Method 2:** Using NewTerm on Your iOS Device
 
   Alternatively, you can use NewTerm (available in Sileo/Zebra) a terminal emulator for iOS. to push the file to your computer:
@@ -143,7 +143,7 @@ To move the extracted IPA file from your iOS device to your computer, you need a
   # The same scp command can also be used to transfer an IPA package from your computer to your jailbroken device (Push)
   scp /home/kali/Downloads/YourAppName.ipa mobile@[device_ip]:/var/mobile/Downloads/  
   ```
-```
+
 This ability to extract IPAs directly from a jailbroken device is a game-changer for security testing. It allows you to:
 
 * Perform static analysis on real applications using tools like Ghidra or Hopper.
@@ -174,7 +174,7 @@ iproxy 2222 22
 # run frida-ios-dump 
 ./dump.py -H device-ip -u user -P password -p 2222 (bundle/name)
 ```
-```
+
 d. The tool dumps the decrypted version of the application from memory.
 
 e. You now have a decrypted IPA that can be properly analyzed.
