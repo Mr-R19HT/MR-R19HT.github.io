@@ -1,5 +1,5 @@
 ---
-date: 2025-09-25 23:03:15
+date: 2025-09-25 23:07:15
 layout: post
 title: iOS All The Things - Part II
 
@@ -138,7 +138,7 @@ To move the extracted IPA file from your iOS device to your computer, you need a
   ```bash
   scp /var/mobile/Downloads/YourAppName.ipa kali@[KALI_IP]:/home/kali/Downloads/
 
-  // The same scp command can also be used to transfer an IPA package from your computer to your jailbroken device (Push)
+  # The same scp command can also be used to transfer an IPA package from your computer to your jailbroken device (Push)
   scp /home/kali/Downloads/YourAppName.ipa mobile@[device_ip]:/var/mobile/Downloads/  
   ```
 
@@ -167,9 +167,9 @@ b. Run the target application on your jailbroken device.
 c. Execute [frida-ios-dump](https://github.com/AloneMonkey/frida-ios-dump) from your computer while the app is active.
 
 ```bash
-// to forward ssh connection
+# to forward ssh connection
 iproxy 2222 22
-// run frida-ios-dump 
+# run frida-ios-dump 
 ./dump.py -H device-ip -u user -P password -p 2222 (bundle/name)
 ```
 
