@@ -1,5 +1,5 @@
 ---
-date: 2025-09-25 22:52:15
+date: 2025-09-25 23:00:15
 layout: post
 title: iOS All The Things - Part II
 
@@ -154,7 +154,7 @@ After transferring an IPA package to your computer, the next step is to analyze 
 
 When you try to analyze an App Store application using reverse engineering tools like Hopper or Ghidra, you'll encounter a significant obstacle: the main executable file is encrypted. Apple encrypts applications from the App Store to protect intellectual property, which means static analysis tools will show garbled or meaningless code.
 
-![image](/assets/img/ios-pentesting/Part-II/hopper-encrypted-content.png)
+![image](/assets/img/ios-pentesting/Part-II/hopper-encrypted-content2.png)
 
 When an iOS application runs, the system must decrypt it in memory to execute the code.
 
