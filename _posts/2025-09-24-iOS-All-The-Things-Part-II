@@ -1,11 +1,11 @@
 ---
-date: 2025-09-24 14:03:30
+date: 2025-09-24 14:08:30
 layout: post
 title: iOS All The Things - Part II
 
 description: 
-image: /assets/img/ios-pentesting/Part-II/cover-part2.jpeg
-optimized_image: /assets/img/ios-pentesting/Part-II/cover-part2.jpeg
+image: /assets/img/ios-pentesting/Part-I/cover-part1.jpeg
+optimized_image: /assets/img/ios-pentesting/Part-I/cover-part1.jpeg
 category: blog
 tags:
   - iOS Pentesting
