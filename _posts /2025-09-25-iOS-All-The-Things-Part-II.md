@@ -1,5 +1,5 @@
 ---
-date: 2025-09-25 23:30:15
+date: 2025-09-25 23:36:15
 layout: post
 title: iOS All The Things - Part II
 
@@ -126,7 +126,7 @@ To move the extracted IPA file from your iOS device to your computer, you need a
   Ensure SSH is enabled on your jailbroken iOS device and that both devices are on the same network.
 
   ```bash
-  scp mobile@[device_ip]:/var/mobile/Documents/YourAppName.ipa /path/on/your/kali/
+  scp mobile@[device_ip]:/var/mobile/Downloads/YourAppName.ipa /path/on/your/kali/
   ```
  
 * **Method 2:** Using NewTerm on Your iOS Device
