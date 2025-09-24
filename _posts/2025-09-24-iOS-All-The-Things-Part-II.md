@@ -1,1 +1,27 @@
+---
+date: 2025-09-24 13:54:30
+layout: post
+title: iOS All The Things - Part II
+
+description: 
+image: /assets/img/ios-pentesting/Part-II/cover-part2.jpeg
+optimized_image: /assets/img/ios-pentesting/Part-II/cover-part2.jpeg
+category: blog
+tags:
+  - iOS Pentesting
+  - IOS Penetration Testing
+  - jailbreak
+  - swift programming
+  - iOS Basics
+---
+
+# Agenda of iOS Pentesting:
+1. [Intro](#intro)
+2. [Types of Jailbreak](#types-of-jailbreak)
+3. [Push & Pull IPA Packages](#push-&-pull-ipa-packages)
+4. [Setup Burpsuite](#setup-burpsuite)
+5. [Tools](#tools)
+6. [Conclusion](#conclusion)
+
+## Intro
 
