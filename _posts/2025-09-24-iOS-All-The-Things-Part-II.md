@@ -1,5 +1,5 @@
 ---
-date: 2025-09-24 16:54:15
+date: 2025-09-24 17:02:15
 layout: post
 title: iOS All The Things - Part II
 
@@ -18,7 +18,7 @@ tags:
 # Agenda of iOS Pentesting:
 1. [Intro](#intro)
 2. [Types of Jailbreaking](#types-of-jailbreaking)
-3. [Push & Pull IPA Packages](#push-&-pull-ipa-packages)
+3. [Pull & Push IPA Packages](#pull-&-push-ipa-packages)
 4. [Setup Burpsuite](#setup-burpsuite)
 5. [Tools](#tools)
 6. [Conclusion](#conclusion)
@@ -77,4 +77,8 @@ c. **Semi-Tethered:** This type of jailbreak allows a user to reboot their phone
 d. **Semi-Untethered:** if reboot the device , the ios is return to normal status but the device have ipa package can use it to do jailbreak again without using any cables.
 
 > **Important Tip:** A semi-untethered jailbreak is often the best choice because it allows for maximum flexibility. If your testing causes a device crash and reboot, you can quickly re-enable the jailbreak directly from the device without needing to be near a computer, ensuring you can get back to work quickly.
+
+Using that [website](https://canijailbreak.com/) to know what’s that tool compatible with version of ios device to make jailbreak.
+
+## Pull & Push IPA Packages
 
