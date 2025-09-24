@@ -1,5 +1,5 @@
 ---
-date: 2025-09-24 16:51:15
+date: 2025-09-24 16:52:15
 layout: post
 title: iOS All The Things - Part II
 
@@ -43,8 +43,9 @@ Here’s the breakdown:
 a. **Exploit a Vulnerability:** The jailbreak tool uses a specific bug or combination of bugs in the iOS software. These can be in the web browser (a "browser-based" exploit) or in a file the device opens.
 
 b. **Bypass Security Protections:** The exploit is used to bypass the two main security features:
-      * Code Signing: This allows the device to run the jailbreak's own code, which is not signed by Apple.
-      * Sandbox: This escapes the app's restricted container, giving the code access to the entire filesystem.
+
+    * Code Signing: This allows the device to run the jailbreak's own code, which is not signed by Apple.
+    * Sandbox: This escapes the app's restricted container, giving the code access to the entire filesystem.
       
 c. **Patch the Kernel:** The "kernel" is the core of the operating system. The jailbreak modifies it in memory to permanently disable the security checks (like code signing enforcement) while the device is running.
 
