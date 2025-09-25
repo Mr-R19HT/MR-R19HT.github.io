@@ -1,5 +1,5 @@
 ---
-date: 2025-09-25 00:43:15
+date: 2025-09-25 01:35:15
 layout: post
 title: iOS All The Things - Part II
 
@@ -183,4 +183,80 @@ e. You now have a decrypted IPA that can be properly analyzed.
 
 ## Setup BurpSuite
 
+Configuring Burp Suite to intercept traffic from an iOS device is crucial for analyzing application communication. Here's a guide:
+
+**Prerequisites:**
+
+* Burp Suite Community/Professional installed on your computer.
+* iOS device and computer on the same Wi-Fi network.
+
+**Step 1: Configure Burp Suite Proxy**
+
+a. Open Burp Suite and go to the Proxy tab → Options.
+
+![image](/assets/img/ios-pentesting/Part-II/proxy-listener.png)
+
+b. Add a new proxy listener:
+
+  * Bind to port: 8080 (or any available port)
+  * Bind to address: Specific address (your computer's IP) or All interfaces
+  * Example: 192.168.1.12:8080
+
+c. Verify the certificate generation is enabled in SSL settings.
+
+**Step 2: Configure iOS Device Network Settings**
+
+a. Find your computer's IP address:
+
+  * Windows: `ipconfig` in Command Prompt.
+  * Linux/macOS: `ifconfig` or `ip addr` in terminal
+
+b. On your iOS device:
+
+![image](/assets/img/ios-pentesting/Part-II/Config-proxy-ios.jpeg)
+
+  * Go to Settings → Wi-Fi
+  * Tap the information (i) icon next to your connected network
+  * Scroll down to Configure Proxy → Select Manual
+  * Server: Enter your computer's IP address
+  * Port: 8080 (or your chosen Burp port)
+  * Authentication: Off (unless you configured it in Burp)
+
+**Step 3: Install Burp's CA Certificate on iOS**
+
+a. On your iOS device:
+
+![image](/assets/img/ios-pentesting/Part-II/install-cert.png)
+
+  * Open Safari and navigate to: http://burpsuite, http://burp/cert or http://[your-computer-ip]:8080
+  * Tap CA Certificate to download the certificate
+
+b. Install the certificate:
+
+![image](/assets/img/ios-pentesting/Part-II/install-profile.png)
+
+  * Go to Settings → General → VPN & Device Management
+  * Tap on Burp Suite CA under "Downloaded Profile"
+  * Tap Install and follow the prompts
+    
+![image](/assets/img/ios-pentesting/Part-II/trust-cert.png)
+
+  * Go to Settings → General → About → Certificate Trust Settings
+  * Enable full trust for the Burp Suite root certificate
+
+**Step 4: Verify the Setup**
+
+![image](/assets/img/ios-pentesting/Part-II/intercept-req.png)
+
+a. In Burp Suite, ensure Intercept is on
+
+b. On your iOS device, open any app or website
+
+c. Check Burp's Proxy tab → Intercept to see captured traffic
+
+d. Test HTTPS sites to confirm SSL interception works
+
+This setup enables you to intercept, analyze, and modify all HTTP/HTTPS traffic between your iOS device and the internet, which is fundamental for comprehensive iOS application security testing.
+
+## Tools
 
