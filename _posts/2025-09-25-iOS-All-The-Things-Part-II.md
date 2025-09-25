@@ -1,5 +1,5 @@
 ---
-date: 2025-09-25 01:35:15
+date: 2025-09-25 02:37:15
 layout: post
 title: iOS All The Things - Part II
 
@@ -20,7 +20,7 @@ tags:
 2. [Types of Jailbreaking](#types-of-jailbreaking)
 3. [Pull & Push IPA Packages](#pull--push-ipa-packages)
 4. [Setup BurpSuite](#setup-burpsuite)
-5. [Tools](#tools)
+5. [Tools & Tweaks](#tools--tweaks)
 6. [Conclusion](#conclusion)
 
 ## Intro
@@ -258,5 +258,80 @@ d. Test HTTPS sites to confirm SSL interception works
 
 This setup enables you to intercept, analyze, and modify all HTTP/HTTPS traffic between your iOS device and the internet, which is fundamental for comprehensive iOS application security testing.
 
-## Tools
+## Tools & Tweaks
+
+### Here's a overview of the essential tools:
+
+**Jailbreak Environment Setup**
+
+a. Device Specification: iPhone 6s running iOS 15.3
+
+b. Jailbreak Tools:
+
+  * Dopamine - Used for jailbreaking iOS 15.3
+  * TrollStore - Essential for permanent IPA signing and installation
+
+**IPA Extraction Solutions**
+
+TrollStore Method:
+
+* Allows clean IPA extraction without app crashing
+* Bypasses code signing requirements permanently
+* Provides stable environment for application analysis
+
+Alternative Method:
+
+* [AppSync Unified](https://github.com/akemin-dayo/AppSync/releases/tag/116.0) - Tweak that disables signature verification
+* Enables installation of unsigned IPA packages
+* Useful when TrollStore isn't compatible
+* Install it:
+
+![image](/assets/img/ios-pentesting/Part-II/appsync-tweak.png)
+  
+  * Go to Safari and open the above link then choose the compitable deb file
+  * Press on it and that take you to sileo
+  * Get on that tweak
+
+**Core Penetration Testing Tools:**
+
+  * Frida: Dynamic instrumentation toolkit
+  * Objection: Runtime mobile exploration (built on Frida)
+  * LLDB: Debugger for low-level analysis
+  * ldid: Link identity editor for code signing
+  * frida-ios-dump: Memory dumping tool for decrypted IPAs
+  * And other tools that we will learn about in the coming parts
+
+### Here's a overview of the tweaks:
+
+**Tweak:** is a small piece of software that modifies the behavior or appearance of your iOS device without changing the original iOS code. Think of it like a "mod" for your iPhone. it customizes or enhances features that Apple doesn't allow you to change normally.
+
+Tweaks are installed through package managers like Cydia, Sileo, or Zebra on jailbroken devices. These are like "alternative app stores" specifically for jailbreak modifications.
+
+Tweaks work by hooking into existing iOS functions and altering their behavior.
+Tweaks are typically written using a framework called Cydia Substrate (or its modern alternative libhooker). Here's how they work:
+
+  * Method Hooking: The tweak "hooks" into specific methods/functions in the iOS system or applications
+  * Code Injection: It injects its own code to run before, after, or instead of the original function
+  * Behavior Modification: This allows the tweak to change what the original code does
+
+Examples of Popular Tweaks:
+
+* Filza: File manager that lets you access the entire iOS filesystem
+* frida-server: Enables Frida communication
+* openssh: SSH server for remote access
+* AppSync Unified: Signature verification bypass
+* NewTerm: Terminal emulator for on-device commands
+* SSL Kill Switch 2: Disables SSL pinning
+
+**Repository Configuration**
+
+![image](/assets/img/ios-pentesting/Part-II/install-repo2.png)
+
+Important Repository:
+  * procursus: Main repository for modern jailbreak tools
+  * Must be added to your package manager for access to essential packages
+
+## Conclusion
+
+
 
