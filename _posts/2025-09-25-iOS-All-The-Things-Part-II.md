@@ -1,5 +1,5 @@
 ---
-date: 2025-09-25 02:37:15
+date: 2025-09-25 03:02:15
 layout: post
 title: iOS All The Things - Part II
 
@@ -333,5 +333,8 @@ Important Repository:
 
 ## Conclusion
 
+Our journey through Part 2 has been methodical and precise. We've equipped ourselves with the essential tools and knowledge needed to penetrate iOS's defenses. We've laid the groundwork for effective penetration testing by understanding jailbreaking, mastering IPA manipulation, configuring our intercepting proxy, and assembling our toolkit.
 
+Just Like Feitan assembling his Pain Packer, we have configured each component with precision. The theory ends here. In Part 3, we cease preparation and unleash this arsenal. not with speeches, but with action. The real penetration begins.
 
+> **Quote From Feitan:** The tools are sharpened. The path is open. Enough preparation. Now we hunt.
