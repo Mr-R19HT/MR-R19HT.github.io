@@ -29,4 +29,5 @@ tags:
 ## Intro
 
 Now, in Part 3, we put that knowledge to the test. This is where we transition from passive observation to active engagement, performing a real-world penetration test against an iOS application.
+
 Our journey will take us deep inside the application's runtime behavior, where we'll learn to manipulate it in real-time with powerful tools like Frida and Objection. We will then reverse engineer its binary to uncover hidden logic and vulnerabilities. We'll intercept and dissect its network communications, and finally, we'll scour its cached data and logs for exposed sensitive information.
