@@ -1,7 +1,7 @@
 ---
-date: 2025-09-30 19:48:15
+date: 2025-09-30 19:50:15
 layout: post
-title: iOS All The Things - Part II
+title: iOS All The Things - Part III
 
 description: 
 image: /assets/img/ios-pentesting/Part-III/cover-test-III.jpeg
