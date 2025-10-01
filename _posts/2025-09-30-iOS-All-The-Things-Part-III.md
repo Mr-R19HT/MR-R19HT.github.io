@@ -1,5 +1,5 @@
 ---
-date: 2025-10-01 15:38:15
+date: 2025-10-01 15:43:15
 layout: post
 title: iOS All The Things - Part III
 
@@ -376,3 +376,5 @@ d. Patching a method at runtime "means modifying the method's implementation to 
 ```bash
 ios hooking set return_value "+[JailbreakDetection isJailbroken]" false
 ```
+### iOS Reverse Engineering
+
