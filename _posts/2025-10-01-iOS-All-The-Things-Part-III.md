@@ -1,5 +1,5 @@
 ---
-date: 2025-10-01 02:10:15
+date: 2025-10-01 02:14:15
 layout: post
 title: iOS All The Things - Part III
 
@@ -60,9 +60,9 @@ It is a dynamic instrumentation toolkit. In simple terms, it lets you inject you
 Once you have a Frida script running inside an application, you can interact with the Objective-C runtime, which is the backbone of most iOS apps. This is incredibly powerful for discovering and manipulating the app's classes and methods on the fly.
 
 ```bash
-// -U: Connect to a USB device
-// -f: Spawn the app with this package name
-// -n: Attach to the process with this name
+# -U: Connect to a USB device
+# -f: Spawn the app with this package name
+# -n: Attach to the process with this name
 
 frida -U -f com.highaltitudehacks.DVIAswiftv2 -n 'DVIA-v2'
 ```
@@ -84,15 +84,15 @@ frida -U -f com.highaltitudehacks.DVIAswiftv2 -n 'DVIA-v2'
   ![image](/assets/img/ios-pentesting/Part-III/methods-frida-trace.png)
 
 ```bash
-// -U: Connect to a USB device
-// -f: Spawn the app with this package name
-// -i: Trace functions containing "jailbreak" in their name
+# -U: Connect to a USB device
+# -f: Spawn the app with this package name
+# -i: Trace functions containing "jailbreak" in their name
     
 frida-trace -U -f com.highaltitudehacks.DVIAswiftv2 -i "*jailbreak*"
 
-// -m: To get all specific method
-// *: Enable pattern matching for function names
-// -n: Attach to the process with this name
+# -m: To get all specific method
+# *: Enable pattern matching for function names
+# -n: Attach to the process with this name
 
 frida-trace -U -n "DVIA-v2" -m "*[jailbreak* *]"
 ```
@@ -100,9 +100,9 @@ frida-trace -U -n "DVIA-v2" -m "*[jailbreak* *]"
   *  `frida-discover`:  is a specialized tool in the Frida suite designed for automated function discovery in binaries and applications. It helps you find interesting functions to trace or hook when you don't know what you're looking for.
 
 ```bash
-// discover all classes and methods of the app
-// -U: Connect to a USB device
-// -n: Attach to the process with this name
+# discover all classes and methods of the app
+# -U: Connect to a USB device
+# -n: Attach to the process with this name
 
 frida-discover -U -n "DVIA-v2"
 ```
@@ -130,7 +130,7 @@ for (var className in ObjC.classes) {
   ```
   
   ```bash
-// run the script on the app to see all classes
+# run the script on the app to see all classes
 frida -U -l viewclasses.js DIVA-V2
   ```
 
