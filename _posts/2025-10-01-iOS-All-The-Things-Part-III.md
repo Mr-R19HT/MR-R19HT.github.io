@@ -1,5 +1,5 @@
 ---
-date: 2025-10-01 15:50:15
+date: 2025-10-01 18:27:15
 layout: post
 title: iOS All The Things - Part III
 
@@ -377,4 +377,235 @@ d. Patching a method at runtime "means modifying the method's implementation to 
 # ios hooking set return_value "+[JailbreakDetection isJailbroken]" false
 ```
 ### iOS Reverse Engineering
+
+iOS reverse engineering is the process of analyzing a compiled application to understand its original source code, logic, and behavior. Since you rarely have access to the original source code during a penetration test, reverse engineering becomes your primary method for uncovering hidden vulnerabilities, backdoors, and security flaws.
+
+**The Reverse Engineering Process:**
+
+![image](/assets/img/ios-pentesting/Part-III/reverse-process.png)
+
+**Decompiling The APP:**
+
+**Mangling** is the compiler's process of encoding readable function/class names into unique, compact symbols for the binary. 
+
+![image](/assets/img/ios-pentesting/Part-III/mangle-swift.png)
+
+**Demangling** is the reverse process, converting these encoded symbols back into human-readable names. This is essential for reverse engineers and security researchers.
+
+![image](/assets/img/ios-pentesting/Part-III/demangle-swift.png)
+
+Using `ipsw` to dump all classes that belongs this function of app:
+
+```bash
+# =============================================
+# iOS BINARY ANALYSIS FOR JAILBREAK DETECTION
+# Purpose: Search for jailbreak detection methods in iOS Mach-O binaries
+# =============================================
+
+# Analyze Swift-specific symbols and classes in the binary for jailbreak detection
+# This command examines the Swift language runtime information in the Mach-O binary
+ipsw macho info --swift DVIA-v2 | grep jailbreak
+
+# =============================================
+# COMMAND BREAKDOWN:
+# - 'ipsw': iOS/macOS reverse engineering toolkit
+# - 'macho info': Command to analyze Mach-O binary format (iOS executable format)
+# - '--swift': Flag to extract Swift-specific metadata and symbols
+# - 'DVIA-v2': Target iOS application binary
+# - '| grep jailbreak': Filters output to show only lines containing "jailbreak"
+# =============================================
+
+# WHAT THIS REVEALS:
+# - Swift classes with "jailbreak" in their names
+# - Swift methods related to jailbreak detection  
+# - Swift properties and variables used for security checks
+# - Swift protocol implementations for security monitoring
+# =============================================
+
+# Analyze ALL classes and symbols in the binary for jailbreak detection
+# This command examines the entire symbol table including Objective-C and C++ symbols
+ipsw macho info -c DVIA-v2 | grep jailbreak
+
+# =============================================
+# COMMAND BREAKDOWN:
+# - 'ipsw macho info': Base command for Mach-O binary analysis
+# - '-c': Flag to show all classes (Objective-C, Swift, C++)
+# - 'DVIA-v2': Target application binary
+# - '| grep jailbreak': Filters for jailbreak-related symbols
+# =============================================
+
+# WHAT THIS REVEALS:
+# - Objective-C classes with "jailbreak" in names
+# - C/C++ functions related to security checks
+# - Method names containing jailbreak detection logic
+# - Category implementations for security features
+# - All symbol references to jailbreak detection
+# =============================================
+```
+
+This script automates the process of dumping both **Objective-C** and **Swift** classes for apps.
+
+```bash
+#!/bin/bash
+
+# =============================================
+# iOS IPA DECOMPILATION AND ANALYSIS SCRIPT
+# Purpose: Automates extraction and class dumping of iOS IPA files
+# =============================================
+
+# Check if an IPA file was provided as command line argument
+# This ensures the script is used correctly with required parameter
+if [ -z "$1" ]; then
+  echo "Usage: $0 <path_to_ipa_file>"
+  exit 1
+fi
+
+# Store the IPA file path provided as first argument
+IPA_FILE="$1"
+
+# Check if the IPA file actually exists on the filesystem
+if [ ! -f "$IPA_FILE" ]; then
+  echo "[@] Error: IPA file not found!"
+  exit 1
+fi
+
+# Extract the app name from the IPA filename (remove .ipa extension)
+APP_NAME="$(basename ""$IPA_FILE"" .ipa)"
+
+# Get the absolute path of the directory containing the IPA file
+# readlink -f resolves symbolic links to get canonical path
+OUTPUT_DIR="$(dirname ""$IPA_FILE"" | xargs readlink -f)"
+
+# Create output directory using the app name as subdirectory
+# This organizes all extracted content in a dedicated folder
+OUTPUT_DIR="$OUTPUT_DIR/$APP_NAME"
+mkdir -p "$OUTPUT_DIR"
+
+# =============================================
+# IPA EXTRACTION PHASE
+# =============================================
+
+# Create temporary directory for unzipped IPA contents
+UNZIP_DIR="$OUTPUT_DIR/_extracted"
+echo "[*] Extracting IPA contents..."
+
+# Create the extraction directory and unzip the IPA file
+# -q flag for quiet mode (suppresses output)
+mkdir -p "$UNZIP_DIR"
+unzip -q "$IPA_FILE" -d "$UNZIP_DIR"
+
+# =============================================
+# BINARY LOCATION PHASE
+# =============================================
+
+# Locate the .app directory within the extracted contents
+# This is the main application bundle in iOS
+APP_PATH=$(find "$UNZIP_DIR" -name "*.app" -type d)
+
+# Check if .app directory was found
+if [ -z "$APP_PATH" ]; then
+  echo "[@] No .app found in $UNZIP_DIR, exiting..."
+  exit 1
+fi
+
+# Construct the path to the main executable binary
+# iOS app binaries typically have the same name as the .app folder without extension
+BINARY="$APP_PATH/$(basename ""$APP_PATH"" .app)"
+
+# Verify the binary executable actually exists
+if [ ! -f "$BINARY" ]; then
+  echo "[@] No binary found in $APP_PATH, exiting..."
+  exit 1
+fi
+
+# =============================================
+# CLASS DUMPING PHASE
+# =============================================
+
+# Create separate directories for Objective-C and Swift class dumps
+CLASS_DUMP_OUTPUT="$OUTPUT_DIR/class_dump"      # Objective-C headers
+SWIFT_DUMP_OUTPUT="$OUTPUT_DIR/swift_dump"      # Swift class information
+mkdir -p "$CLASS_DUMP_OUTPUT"
+mkdir -p "$SWIFT_DUMP_OUTPUT"
+
+# Dump Objective-C classes using class-dump tool
+# This extracts header information from the compiled binary
+echo "[*] Dumping Objective-C classes for $APP_NAME..."
+ipsw class-dump "$BINARY" --headers -o "$CLASS_DUMP_OUTPUT"
+
+# =============================================
+# SWIFT CLASS ANALYSIS PHASE
+# =============================================
+
+# Dump Swift classes using swift-dump tool
+echo "[*] Dumping Swift classes for $APP_NAME..."
+
+# Generate mangled Swift class names (compiler-generated names)
+ipsw swift-dump "$BINARY" > "$SWIFT_DUMP_OUTPUT/$APP_NAME-mangled.txt"
+
+# Generate demangled Swift class names (human-readable names)
+ipsw swift-dump "$BINARY" --demangle > "$SWIFT_DUMP_OUTPUT/$APP_NAME-demangled.txt"
+
+# =============================================
+# COMPLETION
+# =============================================
+
+echo "[+] Decompilation completed for $APP_NAME"
+```
+
+**Analysis & Patching the app by ghidra**
+
+That example on jailbreak function.
+
+a. Extract the binary from the app.
+
+![image](/assets/img/ios-pentesting/Part-III/binary-app.png)
+
+b. Load the binary in Ghidra: Open Ghidra, create a new project and import the DVIA-v2 binary.
+
+![image](/assets/img/ios-pentesting/Part-III/import-binary-app.png)
+
+c. Double-click on the file name after the batch import finished.
+
+d. Click "Yes" on the question regarding analyze now in Ghidra, and "Check Decompiler Parameter ID" next to the default Analysis options, and click on "Analyze".
+
+![image](/assets/img/ios-pentesting/Part-III/decompiler-option.png)
+
+e. Search in the "Symbol Tree" for a function with the name "isJailbroken".
+
+![image](/assets/img/ios-pentesting/Part-III/searching-ghidra.png)
+
+f. Find the instruction that used to detect the jailbreak "Later, I'll cover this point in the next parts of the series".
+
+![image](/assets/img/ios-pentesting/Part-III/instruction-replace.png)
+
+g. Right click on the matching line in the assembly code "**and w0, w8, #01**" -> Patch instruction.
+
+![image](/assets/img/ios-pentesting/Part-III/patch-instruction.png)
+
+h. Change "**and  w0, w8, #01**" to "**mov  w0, #0x0**".
+
+![image](/assets/img/ios-pentesting/Part-III/change-value.png)
+
+i. Save the modified binary via file -> export program, and pick "Original File".
+
+![image](/assets/img/ios-pentesting/Part-III/export-binary-file.png)
+
+j. Replace the original DVIA-V2 binary with the patched DVIA-V2 binary in the Payload folder.
+
+![image](/assets/img/ios-pentesting/Part-III/put-patched-binary-file.png)
+
+k. Zip the modified "Payload" as new IPA and install it on ios device.
+
+![image](/assets/img/ios-pentesting/Part-III/jailbreak-bypass.png)
+
+```bash
+# create patched ipa 
+zip -r DVIA-V2-patched.ipa Payload/
+
+# push ipa package to ios device
+scp /home/kali/Downloads/YourAppName.ipa mobile@[device_ip]:/var/mobile/Downloads/  
+```
+
+### Network Communication
 
