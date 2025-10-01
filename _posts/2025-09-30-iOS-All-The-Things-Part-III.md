@@ -1,5 +1,5 @@
 ---
-date: 2025-10-01 00:33:15
+date: 2025-10-01 00:38:15
 layout: post
 title: iOS All The Things - Part III
 
@@ -83,27 +83,27 @@ frida -U -f com.highaltitudehacks.DVIAswiftv2 -n 'DVIA-v2'
 
     ![image](/assets/img/ios-pentesting/Part-III/methods-frida-trace.png)
 
-    ```bash
-    // -U: Connect to a USB device
-    // -f: Spawn the app with this package name
-    // -i: Trace functions containing "jailbreak" in their name
+```bash
+// -U: Connect to a USB device
+// -f: Spawn the app with this package name
+// -i: Trace functions containing "jailbreak" in their name
     
-    frida-trace -U -f com.highaltitudehacks.DVIAswiftv2 -i "*jailbreak*"
+frida-trace -U -f com.highaltitudehacks.DVIAswiftv2 -i "*jailbreak*"
 
-    // -m: To get all specific method
-    // *: Enable pattern matching for function names
-    // -n: Attach to the process with this name
+// -m: To get all specific method
+// *: Enable pattern matching for function names
+// -n: Attach to the process with this name
 
-    frida-trace -U -n "DVIA-v2" -m "*[jailbreak* *]"
-    ```
+frida-trace -U -n "DVIA-v2" -m "*[jailbreak* *]"
+```
 
   *  `frida-discover`:  is a specialized tool in the Frida suite designed for automated function discovery in binaries and applications. It helps you find interesting functions to trace or hook when you don't know what you're looking for.
 
-    ```bash
-    // discover all classes and methods of the app
-    // -U: Connect to a USB device
-    // -n: Attach to the process with this name
+```bash
+// discover all classes and methods of the app
+// -U: Connect to a USB device
+// -n: Attach to the process with this name
 
-    frida-discover -U -n "DVIA-v2"
-    ```
+frida-discover -U -n "DVIA-v2"
+```
     
