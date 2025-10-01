@@ -1,5 +1,5 @@
 ---
-date: 2025-10-01 02:14:15
+date: 2025-10-01 02:28:15
 layout: post
 title: iOS All The Things - Part III
 
@@ -136,7 +136,57 @@ frida -U -l viewclasses.js DIVA-V2
 
 b. Get all methods of specific class like "JailbreakDetection"
 
+  ```javascript
+// Log startup message to indicate script execution has begun
+console.log("[*] Started: Find All Methods of a Specific Class");
+
+// Check if Objective-C runtime is available in the current context
+// This is important because this script only works on iOS/macOS apps
+if (ObjC.available) {
+    try {
+        // Define the target class name we want to inspect
+        // This should be replaced with the actual class you're investigating
+        var className = "JailbreakDetection";
+        
+        // Access all methods of the specified class
+        // The $methods property contains an array of all instance and class methods
+        var methods = ObjC.classes[className].$methods;  
+        
+        // Iterate through each method in the class
+        for (var i = 0; i < methods.length; i++) {
+            try { 
+                // Print each method name with a prefix for visibility
+                // This reveals all available methods in the JailbreakDetection class
+                console.log("[-] " + methods[i]);  
+            } catch(err) { 
+                // Handle exceptions for individual method access
+                // This prevents one faulty method from breaking the entire loop
+                console.log("[1] Exception1: " + err.message); 
+            }
+        }
+    } catch(err) { 
+        // Handle exceptions for class-level access failures
+        // This occurs if the class doesn't exist or can't be accessed
+        console.log("[1] Exception2: " + err.message); 
+    }    
+} else { 
+    // This branch executes if the script runs in a non-Objective-C environment
+    // (e.g., Android, Windows, or non-instrumented process)
+    console.log("Objective-C Runtime is not available!"); 
+}
+
+// Log completion message to indicate script has finished execution
+console.log("[*] Completed: Find All Methods of a Specific Class");
+  ```
+
 c. Grep on the specific method
+
+  ![image](/assets/img/ios-pentesting/Part-III/method-frida-script.png)
+
+
+  ```bash
+  frida -U -l viewmethods.js DIVA-V2 | grep -i 'jailbreak\|jailbroken'
+  ```
 
 d. Get the original return value
 
