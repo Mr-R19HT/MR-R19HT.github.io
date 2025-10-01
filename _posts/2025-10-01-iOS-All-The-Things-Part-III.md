@@ -1,5 +1,5 @@
 ---
-date: 2025-10-01 15:48:15
+date: 2025-10-01 15:50:15
 layout: post
 title: iOS All The Things - Part III
 
@@ -374,7 +374,7 @@ ios hooking watch method "+[JailbreakDetection isJailbroken]" --dump-args --dump
 d. Patching a method at runtime "means modifying the method's implementation to change its behavior or return values dynamically"
 
 ```bash
-ios hooking set return_value "+[JailbreakDetection isJailbroken]" false
+# ios hooking set return_value "+[JailbreakDetection isJailbroken]" false
 ```
 ### iOS Reverse Engineering
 
