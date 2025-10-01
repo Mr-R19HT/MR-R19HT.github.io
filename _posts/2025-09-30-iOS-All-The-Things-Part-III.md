@@ -1,5 +1,5 @@
 ---
-date: 2025-10-01 04:28:15
+date: 2025-10-01 15:30:15
 layout: post
 title: iOS All The Things - Part III
 
@@ -324,3 +324,55 @@ objection -g 2134 explore
 ```
 
 **Here are fundamental commands:**
+
+* `env`: Find the paths where the application is stored inside the device.
+* `ios bundles list_bundles`: List bundles of the application.
+* `ios bundles list_frameworks`: List external frameworks used by the application.
+* `memory list modules`: List loaded modules in memory.
+* `memory list exports DVIA-v2`: Exports of a loaded module.
+* `memory search "secret" --string`: Search for secrets in memory.
+* `ios jailbreak disable`: Bypass jailbreak detection.
+* `ios sslpinning disable`: Bypass SSL pinning.
+* `ios cookies dump`: Extract cookies.
+* `ios keychain dump`: Dump keychain "keychain is a secure storage system for sensitive information like passwords, credit card details, and cryptographic keys, accessible to apps and the user".
+* `ios monitor crypto`: monitors cryptographic operations in real-time.
+
+**Creating an Objection Script:**
+
+```bash
+# create script
+nano disable_security.objection
+
+# put commands in script like
+ios jailbreak disable
+ios sslpinning disable
+
+# run objection script
+objection -g 2134 explore --script disable_security.objection
+```
+
+**Example: Using Objection to bypass jailbreak**
+
+a. List loaded classes
+
+```bash
+ios hooking list classes
+```
+
+b. List all methods
+
+```bash
+ios hooking list class_methods JailbreakDetection
+```
+
+c. Hook into the isJailbroken method of the JailbreakDetection class and inspect its parameters or return values
+
+```bash
+ios hooking watch method "+[JailbreakDetection isJailbroken]" --dump-args --dump-return
+```
+
+d. Patching a method at runtime "means modifying the method's implementation to change its behavior or return values dynamically"
+
+```bash
+ios hooking set return_value "+[JailbreakDetection isJailbroken]" false
+```
