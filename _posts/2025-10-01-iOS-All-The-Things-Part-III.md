@@ -1,5 +1,5 @@
 ---
-date: 2025-10-01 03:13:15
+date: 2025-10-01 04:12:15
 layout: post
 title: iOS All The Things - Part III
 
@@ -20,7 +20,7 @@ tags:
 
 # Agenda of iOS Pentesting:
 1. [Intro](#intro)
-2. [Runtime Manipulation](#runtime-manipulation)
+2. [Runtime Manipulation: Mastering Frida & Objection](#runtime-manipulation-mastering-frida--objection)
 3. [iOS Reverse Engineering](#ios-reverse-engineering)
 4. [Network Communication](#network-communication)
 5. [Cache & Logs](#cache--logs)
@@ -44,11 +44,11 @@ a. Start the target app on your jailbroken device.
 
 b. Inject Frida scripts to hook into interesting functions.
 
-c. OR Use Objection for quick security assessment and bypasses.
+c. Use Objection for quick security assessment and bypasses.
 
 d. Monitor and manipulate the app's behavior in real-time
 
-#### Frida
+### Frida
 
 It is a dynamic instrumentation toolkit. In simple terms, it lets you inject your own scripts into running applications. Think of it as giving you a "remote control" for any app. you can:
 
@@ -190,4 +190,135 @@ c. Grep on the specific method
 
 d. Get the original return value
 
+  ![image](/assets/img/ios-pentesting/Part-III/retval-frida-script.png)
+
+```javascript
+// Check if Objective-C runtime is available (iOS/macOS environment)
+if (ObjC.available) {
+    try {
+        // Define the target class name containing the method we want to hook
+        var className = "JailbreakDetection";
+        
+        // Define the specific method to hook
+        // The "+" indicates a CLASS method, "-" would indicate INSTANCE method
+        // "isJailbroken:" suggests this method
+        var funcName = "+ isJailbroken";
+        
+        // Get reference to the target method we want to intercept
+        // This accesses the method from the Objective-C runtime
+        var hook = ObjC.classes[className][funcName];
+
+        // Use Frida's Interceptor to attach to the method implementation
+        // This will hook the method and execute our code when it's called
+        Interceptor.attach(hook.implementation, {
+            // 'onLeave' callback executes AFTER the original method completes
+            // This is where we can inspect the return value
+            onLeave: function(retval) {
+                // Log basic information about the hooked call
+                console.log('[*] Class Name: ' + className);
+                console.log('[*] Method Name: ' + funcName);
+                
+                // Log the data type of the return value for debugging
+                console.log('\t[-] Type of return value: ' + typeof retval);
+                
+                // Log the actual return value - this is crucial for analysis
+                // For jailbreak detection, this might be a boolean (true/false)
+                console.log('\t[-] Return Value: ' + retval);
+                
+                // NOTE: This is where you could MODIFY the return value
+                // For example: retval.replace(0x1) to always return true
+            }
+        });
+        
+    } catch(err) {
+        // Handle exceptions that might occur during hook setup
+        // Common errors: class not found, method doesn't exist, permission issues
+        console.log('[!] Exception: ' + err.message);
+    }
+} else {
+    // This executes if not in an Objective-C environment
+    // Could be Android, or the process isn't properly instrumented
+    console.log("Objective-C Runtime is not available!");
+}
+```
+
+```bash
+  frida -U -l retval.js DIVA-V2
+```
+
 e. overwrite on the return value to bypass it
+
+  ![image](/assets/img/ios-pentesting/Part-III/overwrite-frida-script.png)
+
+
+```javascript
+// Check if Objective-C runtime is available (iOS/macOS environment)
+if (ObjC.available) {
+    try {
+        // Define the target class name for jailbreak detection
+        var className = "JailbreakDetection";
+        
+        // Define the specific class method to hook - "+" indicates class method
+        var funcName = "+ isJailbroken";
+        
+        // Get reference to the target method we want to intercept
+        // This accesses the method from the Objective-C runtime
+        var hook = ObjC.classes[className][funcName];
+        
+        // Create a pointer to the value 0x0 (FALSE) that we'll use to overwrite return value
+        var newretval = ptr("0x0");
+
+        // Hook the method implementation using Frida's Interceptor
+        Interceptor.attach(hook.implementation, {
+            // This function executes AFTER the original method completes
+            onLeave: function(retval) { 
+                // Log information about the hooked method call
+                console.log('[*] Class Name: ' + className);
+                console.log('[*] Method Name: ' + funcName);
+                
+                // Display the data type of the original return value
+                console.log('\t[-] Type of return value: ' + typeof retval);
+                
+                // Show the original return value before modification
+                console.log('\t[-] Original Return Value: ' + retval);
+                
+                // Replace the return value with our desired value (0x0 = FALSE)
+                // This bypasses jailbreak detection by always returning "not jailbroken"
+                retval.replace(newretval);
+                
+                // Confirm the new return value that was set
+                console.log('\t[-] New Return Value: ' + newretval); 
+            } 
+        });
+    } catch(err) { 
+        // Handle any exceptions that occur during the hooking process
+        console.log("[1] Exception2: " + err.message); 
+    } 
+} else { 
+    // This executes if Objective-C runtime is not available
+    // (e.g., Android device, wrong process, or instrumentation failed)
+    console.log("Objective-C Runtime is not available!");
+}
+```
+
+```bash
+  frida -U -l overwrite.js DIVA-V2
+```
+
+### Objection
+
+It is a runtime mobile exploration toolkit built on top of Frida. It simplifies many common tasks. that provides ready-to-use commands for:
+
+* Bypassing SSL pinning with a single command.
+* Disabling common security controls.
+* Exploring the app's data storage.
+* Dumping keychain information
+
+Once you have connected to an application using Objection, you can immediately begin exploring the Objective-C runtime, which forms the core of most iOS apps. Objection simplifies this process, allowing you to discover and interact with the app's classes and methods through an intuitive command-line interface.
+
+```bash
+# -g: Connect to a process with PID (Process ID) 2134
+# explore: Start an interactive exploration session
+
+objection -g 2134 explore
+```
