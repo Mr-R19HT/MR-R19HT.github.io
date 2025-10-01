@@ -609,3 +609,34 @@ scp /home/kali/Downloads/YourAppName.ipa mobile@[device_ip]:/var/mobile/Download
 
 ### Network Communication
 
+Network communication analysis is a fundamental part of iOS penetration testing, as most apps communicate with backend services, APIs, and third-party services. Understanding how to intercept, analyze, and manipulate this traffic is crucial for identifying security vulnerabilities.
+
+If you have the application's source code, you can permanently embed the Burp Suite Certificate Authority (CA) into the app's trust store. After recompiling and installing this modified version, the app will trust Burp's intercepting proxy, allowing you to capture all HTTPS traffic without encountering certificate errors.
+
+To prevent certificate trust errors, you can calculate the hash of the Burp Suite CA certificate and add it to the app's Info.plist file. This whitelists the certificate, allowing the app to trust Burp's proxy and enabling seamless interception of all HTTPS traffic.
+
+```bash
+# Convert DER Certificate to PEM Format
+# x509: X.509 certificate processing command
+# -inform DER: Input format is DER (Binary format)
+# -in burp.der: Input certificate file
+# -out burp.pem: Output file in PEM (Base64 text format)
+
+openssl x509 -inform DER -in burp.der -out burp.pem
+
+# Extract Public Key and Generate SHA256 Hash
+# -noout: Suppress certificate output
+# -pubkey: Output only the public key
+# -outform pem: Output in PEM format
+# -pubin: Input is a public key
+# -inform pem: Input format is PEM
+# -outform der: Output format is DER (binary)
+# dgst: Digest/hashing command
+# -sha256: Use SHA256 algorithm
+# -binary: Output in binary format (not hex)
+# enc: Encoding command
+# -base64: Use Base64 encoding
+
+cat burp.pem | openssl x509 -inform pem -noout -outform pem -pubkey | openssl pkey -pubin -inform pem -outform der | openssl dgst -sha256 -binary | openssl enc -base64
+```
+
