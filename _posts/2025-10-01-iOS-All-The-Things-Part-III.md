@@ -1,5 +1,5 @@
 ---
-date: 2025-09-30 23:19:15
+date: 2025-10-01 00:25:15
 layout: post
 title: iOS All The Things - Part III
 
@@ -75,4 +75,35 @@ frida -U -f com.highaltitudehacks.DVIAswiftv2 -n 'DVIA-v2'
 
 * `ObjC.classes`: This command provides a goldmine of information. It returns a list of all Objective-C classes currently loaded in the application's memory. This is your starting point for understanding the app's structure and finding interesting targets to hook and manipulate.
 
-* 
+* another commands:
+  
+  * `frida-trace`: is a dynamic tracing tool built on top of Frida that automatically instruments and traces function calls in applications. It's designed for quick and easy function monitoring without writing custom scripts.
+
+    ![image](/assets/img/ios-pentesting/Part-III/classes-frida.png)
+
+    ![image](/assets/img/ios-pentesting/Part-III/methods-frida-trace.png)
+
+    ```bash
+    // -U: Connect to a USB device
+    // -f: Spawn the app with this package name
+    // -i: Trace functions containing "jailbreak" in their name
+    
+    frida-trace -U -f com.highaltitudehacks.DVIAswiftv2 -i "*jailbreak*"
+
+    // -m: To get all specific method
+    // *: Enable pattern matching for function names
+    // -n: Attach to the process with this name
+
+    frida-trace -U -n "DVIA-v2" -m "*[jailbreak* *]"
+    ```
+
+  *  `frida-discover`:  is a specialized tool in the Frida suite designed for automated function discovery in binaries and applications. It helps you find interesting functions to trace or hook when you don't know what you're looking for.
+
+    ```bash
+    // discover all classes and methods of the app
+    // -U: Connect to a USB device
+    // -n: Attach to the process with this name
+
+    frida-discover -U -n "DVIA-v2"
+    ```
+    
