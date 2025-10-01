@@ -1,5 +1,5 @@
 ---
-date: 2025-10-01 04:24:15
+date: 2025-10-01 04:28:15
 layout: post
 title: iOS All The Things - Part III
 
@@ -322,3 +322,5 @@ Once you have connected to an application using Objection, you can immediately b
 
 objection -g 2134 explore
 ```
+
+**Here are fundamental commands:**
