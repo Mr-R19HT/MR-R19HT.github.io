@@ -1,5 +1,5 @@
 ---
-date: 2025-10-01 03:11:15
+date: 2025-10-01 03:13:15
 layout: post
 title: iOS All The Things - Part III
 
@@ -136,7 +136,7 @@ frida -U -l viewclasses.js DIVA-V2
 
 b. Get all methods of specific class like "JailbreakDetection"
 
-  ```javascript
+```javascript
 // Log startup message to indicate script execution has begun
 console.log("[*] Started: Find All Methods of a Specific Class");
 
@@ -177,7 +177,7 @@ if (ObjC.available) {
 
 // Log completion message to indicate script has finished execution
 console.log("[*] Completed: Find All Methods of a Specific Class");
-  ```
+```
 
 c. Grep on the specific method
 
