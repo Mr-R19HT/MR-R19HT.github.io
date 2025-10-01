@@ -1,5 +1,5 @@
 ---
-date: 2025-10-01 01:39:15
+date: 2025-10-01 02:07:15
 layout: post
 title: iOS All The Things - Part III
 
@@ -79,9 +79,9 @@ frida -U -f com.highaltitudehacks.DVIAswiftv2 -n 'DVIA-v2'
   
   * `frida-trace`: is a dynamic tracing tool built on top of Frida that automatically instruments and traces function calls in applications. It's designed for quick and easy function monitoring without writing custom scripts.
 
-![image](/assets/img/ios-pentesting/Part-III/classes-frida.png)
+  ![image](/assets/img/ios-pentesting/Part-III/classes-frida.png)
 
-![image](/assets/img/ios-pentesting/Part-III/methods-frida-trace.png)
+  ![image](/assets/img/ios-pentesting/Part-III/methods-frida-trace.png)
 
 ```bash
 // -U: Connect to a USB device
@@ -107,3 +107,37 @@ frida-trace -U -n "DVIA-v2" -m "*[jailbreak* *]"
 frida-discover -U -n "DVIA-v2"
 ```
     
+**Example: Using Frida Scripts to bypass Jailbreak**
+
+a. Get all classes of app
+
+  ![image](/assets/img/ios-pentesting/Part-III/view-classes-frida.png)
+
+  ```javascript
+// Iterate through all available Objective-C classes in the runtime
+// This loop goes through every class that Frida can discover in the Objective-C runtime
+for (var className in ObjC.classes) {
+    
+    // Safety check: Verify that the property actually belongs to ObjC.classes object
+    // This prevents iterating over inherited properties from the prototype chain
+    if (ObjC.classes.hasOwnProperty(className)) {
+        
+        // Print the class name to the console
+        // This reveals all Objective-C classes currently loaded in the target application
+        console.log(className);
+    }
+}
+  ```
+  
+  ```bash
+// run the script on the app to see all classes
+frida -U -l viewclasses.js DIVA-V2
+  ```
+
+b. Get all methods of specific class like "JailbreakDetection"
+
+c. Grep on the specific method
+
+d. Get the original return value
+
+e. overwrite on the return value to bypass it
