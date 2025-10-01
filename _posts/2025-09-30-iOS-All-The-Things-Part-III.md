@@ -1,5 +1,5 @@
 ---
-date: 2025-10-01 00:42:15
+date: 2025-10-01 00:44:15
 layout: post
 title: iOS All The Things - Part III
 
@@ -79,9 +79,9 @@ frida -U -f com.highaltitudehacks.DVIAswiftv2 -n 'DVIA-v2'
   
   * `frida-trace`: is a dynamic tracing tool built on top of Frida that automatically instruments and traces function calls in applications. It's designed for quick and easy function monitoring without writing custom scripts.
 
-    ![image](/assets/img/ios-pentesting/Part-III/classes-frida.png)
+![image](/assets/img/ios-pentesting/Part-III/classes-frida.png)
 
-    ![image](/assets/img/ios-pentesting/Part-III/methods-frida-trace.png)
+![image](/assets/img/ios-pentesting/Part-III/methods-frida-trace.png)
 
 ```bash
 // -U: Connect to a USB device
