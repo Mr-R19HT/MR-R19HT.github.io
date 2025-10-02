@@ -1,5 +1,5 @@
 ---
-date: 2025-10-02 00:34:15
+date: 2025-10-02 00:54:15
 layout: post
 title: iOS All The Things - Part III
 
@@ -24,7 +24,7 @@ tags:
 3. [iOS Reverse Engineering](#ios-reverse-engineering)
 4. [Network Communication](#network-communication)
 5. [Logs](#logs)
-6. [Conclusion](conclusion)
+6. [Conclusion](#conclusion)
 
 ## Intro
 
