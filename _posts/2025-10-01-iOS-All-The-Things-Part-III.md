@@ -1,11 +1,11 @@
 ---
-date: 2025-10-02 00:54:15
+date: 2025-10-02 02:05:15
 layout: post
 title: iOS All The Things - Part III
 
 description: 
-image: /assets/img/ios-pentesting/Part-III/cover-test-III.jpeg
-optimized_image: /assets/img/ios-pentesting/Part-III/cover-test-III.jpeg
+image: /assets/img/ios-pentesting/Part-III/cover3.jpg
+optimized_image: /assets/img/ios-pentesting/Part-III/cover3.jpg
 category: blog
 tags:
   - iOS Pentesting
@@ -373,7 +373,8 @@ d. Patching a method at runtime "means modifying the method's implementation to 
 ```bash
 # ios hooking set return_value "+[JailbreakDetection isJailbroken]" false
 ```
-### iOS Reverse Engineering
+
+## iOS Reverse Engineering
 
 iOS reverse engineering is the process of analyzing a compiled application to understand its original source code, logic, and behavior. Since you rarely have access to the original source code during a penetration test, reverse engineering becomes your primary method for uncovering hidden vulnerabilities, backdoors, and security flaws.
 
@@ -606,7 +607,7 @@ zip -r DVIA-V2-patched.ipa Payload/
 scp /home/kali/Downloads/YourAppName.ipa mobile@[device_ip]:/var/mobile/Downloads/  
 ```
 
-### Network Communication
+## Network Communication
 
 Network communication analysis is a fundamental part of iOS penetration testing, as most apps communicate with backend services, APIs, and third-party services. Understanding how to intercept, analyze, and manipulate this traffic is crucial for identifying security vulnerabilities.
 
@@ -736,7 +737,7 @@ Interceptor.attach(
 );
 ```
 
-### Logs
+## Logs
 
 Apps log various pieces of information which can be sensitive. To monitor these logs, tools and commands like:
 
@@ -754,7 +755,7 @@ For more advanced logging, connecting to the device shell and using socat can pr
 iPhone:~ root# socat - UNIX-CONNECT:/var/run/lockdown/syslog.sock
 ```
 
-### Conclusion
+## Conclusion
 
 Just as Shalnark masterfully operates his Black Voice ability by inserting antennas to take complete control, we have successfully inserted our tools into the target applications to command their runtime behavior. Our systematic approach through runtime manipulation, reverse engineering, and network interception has given us total oversight of the application's inner workings.
 
