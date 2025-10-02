@@ -1,5 +1,5 @@
 ---
-date: 2025-10-01 19:24:15
+date: 2025-10-02 00:22:15
 layout: post
 title: iOS All The Things - Part III
 
@@ -23,7 +23,7 @@ tags:
 2. [Runtime Manipulation: Mastering Frida & Objection](#runtime-manipulation-mastering-frida--objection)
 3. [iOS Reverse Engineering](#ios-reverse-engineering)
 4. [Network Communication](#network-communication)
-5. [Cache & Logs](#cache--logs)
+5. [Logs](#logs)
 6. [Conclusion](conclusion)
 
 ## Intro
@@ -118,7 +118,7 @@ a. Get all classes of app
 // This loop goes through every class that Frida can discover in the Objective-C runtime
 for (var className in ObjC.classes) {
     
-    // Safety check: Verify that the property actually belongs to ObjC.classes object
+    // Verify that the property actually belongs to ObjC.classes object
     // This prevents iterating over inherited properties from the prototype chain
     if (ObjC.classes.hasOwnProperty(className)) {
         
@@ -141,11 +141,9 @@ b. Get all methods of specific class like "JailbreakDetection"
 console.log("[*] Started: Find All Methods of a Specific Class");
 
 // Check if Objective-C runtime is available in the current context
-// This is important because this script only works on iOS/macOS apps
 if (ObjC.available) {
     try {
         // Define the target class name we want to inspect
-        // This should be replaced with the actual class you're investigating
         var className = "JailbreakDetection";
         
         // Access all methods of the specified class
@@ -171,7 +169,6 @@ if (ObjC.available) {
     }    
 } else { 
     // This branch executes if the script runs in a non-Objective-C environment
-    // (e.g., Android, Windows, or non-instrumented process)
     console.log("Objective-C Runtime is not available!"); 
 }
 
@@ -193,7 +190,7 @@ d. Get the original return value
   ![image](/assets/img/ios-pentesting/Part-III/retval-frida-script.png)
 
 ```javascript
-// Check if Objective-C runtime is available (iOS/macOS environment)
+// Check if Objective-C runtime is available
 if (ObjC.available) {
     try {
         // Define the target class name containing the method we want to hook
@@ -201,7 +198,6 @@ if (ObjC.available) {
         
         // Define the specific method to hook
         // The "+" indicates a CLASS method, "-" would indicate INSTANCE method
-        // "isJailbroken:" suggests this method
         var funcName = "+ isJailbroken";
         
         // Get reference to the target method we want to intercept
@@ -221,7 +217,7 @@ if (ObjC.available) {
                 // Log the data type of the return value for debugging
                 console.log('\t[-] Type of return value: ' + typeof retval);
                 
-                // Log the actual return value - this is crucial for analysis
+                // Log the actual return value, this is crucial for analysis
                 // For jailbreak detection, this might be a boolean (true/false)
                 console.log('\t[-] Return Value: ' + retval);
                 
@@ -237,7 +233,6 @@ if (ObjC.available) {
     }
 } else {
     // This executes if not in an Objective-C environment
-    // Could be Android, or the process isn't properly instrumented
     console.log("Objective-C Runtime is not available!");
 }
 ```
@@ -252,7 +247,7 @@ e. overwrite on the return value to bypass it
 
 
 ```javascript
-// Check if Objective-C runtime is available (iOS/macOS environment)
+// Check if Objective-C runtime is available
 if (ObjC.available) {
     try {
         // Define the target class name for jailbreak detection
@@ -296,7 +291,6 @@ if (ObjC.available) {
     } 
 } else { 
     // This executes if Objective-C runtime is not available
-    // (e.g., Android device, wrong process, or instrumentation failed)
     console.log("Objective-C Runtime is not available!");
 }
 ```
@@ -304,6 +298,9 @@ if (ObjC.available) {
 ```bash
   frida -U -l overwrite.js DIVA-V2
 ```
+
+> **Note:** Instance Method(-): An instance of the class (`[obj method]`).
+> Class Method: The class itself (`[ClassName method]`).
 
 ### Objection
 
@@ -404,6 +401,7 @@ Using `ipsw` to dump all classes that belongs this function of app:
 
 # Analyze Swift-specific symbols and classes in the binary for jailbreak detection
 # This command examines the Swift language runtime information in the Mach-O binary
+
 ipsw macho info --swift DVIA-v2 | grep jailbreak
 
 # =============================================
@@ -424,6 +422,7 @@ ipsw macho info --swift DVIA-v2 | grep jailbreak
 
 # Analyze ALL classes and symbols in the binary for jailbreak detection
 # This command examines the entire symbol table including Objective-C and C++ symbols
+
 ipsw macho info -c DVIA-v2 | grep jailbreak
 
 # =============================================
@@ -640,3 +639,123 @@ openssl x509 -inform DER -in burp.der -out burp.pem
 cat burp.pem | openssl x509 -inform pem -noout -outform pem -pubkey | openssl pkey -pubin -inform pem -outform der | openssl dgst -sha256 -binary | openssl enc -base64
 ```
 
+**Key Aspects of Network Communication:**
+
+a. Common Protocols and Methods
+  * HTTP/HTTPS: Standard web protocols for API calls
+  * WebSockets: Real-time communication
+  * TCP/UDP: Custom protocols for specific services
+  * gRPC: High-performance RPC framework
+  * QUIC: Modern transport layer protocol
+
+b. iOS-Specific Networking Components
+  
+  ```swift
+  // Common iOS networking classes
+  URLSession.shared.dataTask(with: url) // Most common
+  URLSession(configuration: .default)
+  Alamofire.SessionManager.default // Popular third-party library
+  Network.framework // Apple's modern networking framework
+  ```
+
+**Intercepting Network Traffic:**
+
+a. BurpSuite Setup: Building on the Burp Suite configuration we established in Part II.
+
+b. SSL Pinning Bypass: Many apps implement SSL pinning to prevent interception.
+
+  * Using Objection:
+    
+    ```bash
+    objection explore --start-command "ios sslpinning disable"
+    ```
+    
+  * Using Frida:
+    
+    ```javascript
+    // Bypass common pinning libraries
+    if (ObjC.available) {
+      var NSURLSession = ObjC.classes.NSURLSession;
+      // Hook certificate validation methods
+    }
+    ```
+    
+  * Common Pinning Libraries to Target:
+
+    ```bash
+    TrustKit
+    AFNetworking
+    Alamofire
+    URLSession delegates
+    ```
+    
+**Analyzing Network Traffic:**
+
+a. Static Analysis:
+
+  * Search for API endpoints in binary strings.
+  * Identify networking classes in decompiled code.
+  * Find hardcoded URLs and credentials.
+
+b. Dynamic Analysis:
+
+  * Monitor real-time traffic in Burp.
+  * Trace network-related function calls.
+  * Modify requests/responses on the fly.
+
+Example Frida Script for Network Monitoring:
+
+```javascript
+// Hook the iOS URLSession dataTaskWithRequest:completionHandler: method
+// This method is used for creating HTTP/HTTPS network requests in iOS apps
+Interceptor.attach(
+    // Target the implementation of the dataTaskWithRequest:completionHandler: method
+    // This is an instance method (indicated by '-') of the URLSession class
+    ObjC.classes.URLSession['- dataTaskWithRequest:completionHandler:'].implementation, 
+    {
+        // onEnter is called when the method is invoked (before the original method executes)
+        onEnter: function(args) {
+            // args[2] contains the first parameter: NSURLRequest object
+            // Convert the native Objective-C pointer to a usable JavaScript object
+            var request = new ObjC.Object(args[2]);
+            
+            // Log the destination URL of the network request
+            // request.URL() returns an NSURL object, toString() converts it to readable string
+            console.log("[+] URL: " + request.URL().toString());
+            
+            // Log all HTTP headers from the request
+            // allHTTPHeaderFields() returns an NSDictionary of header key-value pairs
+            console.log("[+] Headers: " + request.allHTTPHeaderFields());
+        }
+        
+        // Note: You could add onLeave here to monitor the return value (NSURLSessionDataTask)
+        // onLeave: function(retval) {
+        //     console.log("[+] Created data task: " + retval);
+        // }
+    }
+);
+```
+
+### Logs
+
+Apps log various pieces of information which can be sensitive. To monitor these logs, tools and commands like:
+
+```bash
+# To find the device ID
+idevice_id --list
+
+# To capture the device logs   
+idevicesyslog -u <id> (| grep <app>)   
+```
+
+For more advanced logging, connecting to the device shell and using socat can provide real-time log monitoring:
+
+```bash
+iPhone:~ root# socat - UNIX-CONNECT:/var/run/lockdown/syslog.sock
+```
+
+### Conclusion
+
+Just as Shalnark masterfully operates his Black Voice ability by inserting antennas to take complete control, we have successfully inserted our tools into the target applications to command their runtime behavior. Our systematic approach through runtime manipulation, reverse engineering, and network interception has given us total oversight of the application's inner workings.
+
+> **Quote from Shalnark**: Once my antenna is in, the target is mine to control. I can make it do anything I want.
