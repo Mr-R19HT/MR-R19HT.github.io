@@ -1,5 +1,5 @@
 ---
-date: 2025-10-07 19:58:15
+date: 2025-10-07 20:02:15
 layout: post
 title: iOS All The Things - Part IV
 
@@ -54,19 +54,19 @@ a. Code Obfuscation: make the code difficult for humans to read and understand.
   
   The standard compiler generates binary symbols based on class and function names from the source code. Therefore, if no obfuscation was applied, symbol names remain meaningful and can be easily read straight from the app binary. For instance, a function which detects a jailbreak can be located by searching for relevant keywords (e.g. "jailbreak"). The listing below shows the disassembled function `JailbreakDetectionViewController.jailbreakTest4Tapped` from the DVIA-v2 app.
 
-  ```assembly
+```assembly
   __T07DVIA_v232JailbreakDetectionViewControllerC20jailbreakTest4TappedyypF:
   stp        x22, x21, [sp, #-0x30]! 
   mov        rbp, rsp
-  ```
+```
 
   After the obfuscation we can observe that the symbol's name is no longer meaningful as shown on the listing below.
 
-  ```assembly
+```assembly
   __T07DVIA_v232zNNtWKQptikYUBNBgfFVMjSkvRdhhnbyyFySbyypF:
   stp        x22, x21, [sp, #-0x30]!
   mov        rbp, rsp
-  ```
+```
 
   Nevertheless, this only applies to the names of functions, classes and fields. The actual code remains unmodified, so an attacker can still read the disassembled version of the function and try to understand its purpose (e.g. to retrieve the logic of a security algorithm).
 
