@@ -207,5 +207,85 @@ c. **Bypass Techniques:**
 
 Third-party libraries are pre-built code components that developers integrate into their iOS apps to add functionality without building everything from scratch. While they save development time, they introduce significant security risks that penetration testers must assess.
 
+**Here's what penetration testers need to know:**
 
+a. Insecure Dependencies
+
+  * The Dependency Chain Problem:
+    * Libraries often depend on other libraries.
+    * Vulnerabilities can hide deep in the dependency tree.
+    * Developers may be unaware of all components in their app.
+
+    Common Issues:
+
+    ```bash
+    # Example: Checking for vulnerable Alamofire version
+    # CVE-2023-XXXX - SSL bypass vulnerability in Alamofire < 5.6.0
+    strings Binary-App | grep Alamofire
+
+    # Using MobSF to scan for known vulnerabilities
+    python3 mobsf_analyzer.py -i App.ipa
+    ```
+
+    Detection Methods:
+
+    ```bash
+    # Check Podfile.lock for dependency versions
+    cat Podfile.lock | grep -A 5 "DEPENDENCIES"
+
+    # Manual version checking for common libraries
+    strings Binary-App | grep -E "[0-9]+\.[0-9]+\.[0-9]+"
+    ```
+
+b. Dylib Risks
+
+  * Dynamic libraries loaded at runtime.
+  * Can be swapped or injected with malicious versions.
+  * Common in plugin architectures and modular apps.
+
+  Security Concerns:
+
+  ```bash
+  # Check for embedded dylibs
+  find YourApp.app -name "*.dylib"
+
+  # Check rpath for insecure paths
+  strings Binary-App | grep -A 3 LC_RPATH
+  ```
+
+  We can use objection to get dynamic library loads and frameworks:
+
+  ```bash
+  ios bundles list_bundles
+  ios bundles list_frameworks
+  ```
+
+  ![image](/assets/img/ios-pentesting/Part-IV/objection.png)
+
+  We can use ipsw to get dynamic library loads and frameworks:
+
+  ```bash
+  ipsw macho info DVIA-v2
+  ```
+
+   ![image](/assets/img/ios-pentesting/Part-IV/libs-frames.png)
+
+   We can use frida script to monitor dylib loading:
+
+   ```javascript
+  Interceptor.attach(Module.findExportByName(null, "dlopen"), {
+      onEnter: function(args) {
+          var path = args[0].readCString();
+          console.log("[+] Loading dylib: " + path);
+          // Flag suspicious paths outside app bundle
+          if (path && !path.includes("/var/containers/Bundle/Application/")) {
+              console.log("[!] Suspicious dylib path: " + path);
+          }
+      }
+  });
+   ```
+
+
+
+    
 
