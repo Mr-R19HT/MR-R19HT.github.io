@@ -1,5 +1,5 @@
 ---
-date: 2025-10-07 20:02:15
+date: 2025-10-08 00:02:15
 layout: post
 title: iOS All The Things - Part IV
 
@@ -40,7 +40,7 @@ iOS code security encompasses the techniques and mechanisms used to protect an a
 
 **Key Areas of iOS Code Security:**
 
-a. Code Obfuscation: make the code difficult for humans to read and understand.
+a. **Code Obfuscation:** make the code difficult for humans to read and understand.
 
   * Common Techniques:
     * Mangling: Changing meaningful class and method names to random characters (talks in Part-III).
@@ -48,7 +48,7 @@ a. Code Obfuscation: make the code difficult for humans to read and understand.
     * String Encryption: Encrypting hardcoded strings and decrypting them only at runtime.
     * Instruction Substitution: Replacing simple instructions with more complex equivalent operations.
 
-   > **Important Tip:** Objective-c is easier to reverse using ghidra.
+   > **Note:** Objective-c is easier to reverse using ghidra.
 
   Example on Obfuscation:
   
@@ -101,4 +101,111 @@ a. Code Obfuscation: make the code difficult for humans to read and understand.
   Button_Emulator ===> akcVscrZFdBBYqYrcmhhyXAevNdXOKeG
   ```
 
+  **Hardcoded Secrets**
   
+  Without proper obfuscation, hardcoded secrets become low-hanging fruit for attackers. When code isn't obfuscated, sensitive information remains in plain sight within the binary, making it easily discoverable through basic reverse engineering techniques.
+
+  In files or Decompiled source code:
+  
+  * Analyze the strings within the binary for any signs of sensitive data, such as API keys, tokens, credentials, or URLs.
+  * Search through the codebase for hardcoded values that may indicate secrets. Look for keywords such as: _API_KEY_, _ACCESS_TOKEN_, _SECRET_, _PASSWORD_, _PASSWD_, _AUTH_, _KEY_, _TOKEN_, _PRIVATE_KEY_, _CLIENT_ID_, _CLIENT_SECRET_, _USERNAME_, _DB_PASSWORD._
+  * Review configuration files and other resources within the app for any embedded sensitive information.
+
+  Using simple command `strings` to get sensitive data:
+
+  ```bash
+  strings DVIA-v2
+
+  # specify hardcoded secrets we want to search
+  strings DVIA-v2 | grep -i "api\|key\|token\|password\|secret"
+  ```
+
+  ![image](/assets/img/ios-pentesting/Part-IV/strings.png)
+
+  or can search on decompiled source code by ghidra
+
+  ![image](/assets/img/ios-pentesting/Part-IV/ghidra.png)
+
+
+b. **Anti-Debugging Protections:** Prevent attackers from debugging the application.
+
+  * Common Implementations:
+    * `ptrace` system call with `PT_DENY_ATTACH` flag.
+    * `sysctl` to check for debugger presence.
+    * `getppid()` to detect if the process is being debugged.
+    * Signal handlers to detect breakpoints.
+
+c. **Anti-Tampering Mechanisms**: Detect if the application has been modified.
+
+  * Common Approaches:
+    * Integrity Checks: Calculating and verifying checksums of the application binary.
+    * Signature Verification: Checking the code signature at runtime.
+    * Jailbreak Detection: Identifying if the device is jailbroken.
+
+d. **Runtime Protection:** Protect the application while it's running.
+
+   * Techniques Include:
+     * Method Swizzling Detection: Monitoring for attempts to hook Objective-C methods.
+     * Frida Detection: Checking for Frida's presence in memory.
+     * SSL Pinning: Preventing traffic interception.
+
+e. **Debugging Symbols**: are crucial metadata generated during the compilation process that map the compiled binary code back to the original source code. They play a significant role in both development and security analysis.
+
+  * makes reverse engineering easier.
+  * symbol table of mach-o binary.
+  * check with tools like: objdump, llvm-objdump, nm.
+  * get-task-allow entitlement.
+
+  > **Note:** Xcode automatically adds the `Get Task Allow` entitlement to apps that you build for debugging, while removing the entitlement before App Store submission. This enables Xcode itself to attach to and debug your app during development.
+
+  On Linux to check the debugging symbols enabled or not:
+
+  ```bash
+  sudo apt-get install llvm
+  llvm-objdump --syms DVIA-v2 | grep "      d"
+  ```
+
+  ![image](/assets/img/ios-pentesting/Part-IV/llvm.png)
+
+  ```bash
+  # or can use that
+  ipsw ent --input DVIA-v2
+  ```  
+
+  ![image](/assets/img/ios-pentesting/Part-IV/ipsw.png)
+
+  That output means debugging symbols is enabled.
+
+### Testing Methodology
+
+a. **Static Analysis:**
+
+  * Use tools like strings to look for protection indicators.
+  * Search for common anti-debugging function names.
+  * Analyze the binary for unusual code patterns.
+
+b. **Dynamic Analysis:**
+
+  * Run the app and monitor for crash or exit when debugging tools are attached.
+  * Use Frida to hook security-related functions.
+  * Test the application's behavior in jailed vs jailbroken environments.
+
+c. **Bypass Techniques:**
+
+  * Patch anti-debugging checks using Frida or binary patching.
+  * Use runtime manipulation to override protection logic.
+  * Employ kernel-level bypasses for advanced protections.
+
+### Common Vulnerabilities in Code Security
+
+* **Inconsistent Protection:** Some parts of the app are protected while others are not.
+* **Client-Side Only Checks:** Protection logic that can be easily bypassed.
+* **Predictable Obfuscation:** Patterns that can be recognized and reversed.
+* **Error Handling:** Protections that crash the app rather than failing gracefully.
+
+## Third Party Libraries
+
+Third-party libraries are pre-built code components that developers integrate into their iOS apps to add functionality without building everything from scratch. While they save development time, they introduce significant security risks that penetration testers must assess.
+
+
+
