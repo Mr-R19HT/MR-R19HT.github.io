@@ -23,7 +23,7 @@ tags:
 2. [iOS Code Security](#ios-code-security)
 3. [Third Party Libraries](#third-party-libraries)
 4. [Inter-Process Communication (IPC)](#inter-process-communication-ipc)
-5. [Web Views Javascript to Native Bridge](#web-views-javascript-to-native-bridge)
+5. [WebViews Javascript to Native Bridge](#webviews-javascript-to-native-bridge)
 6. [Conclusion](#conclusion)
 
 ## Intro
@@ -603,7 +603,7 @@ d. Extension Security:
   * Implement data sanitization.
   * Use separate app groups for sensitive data.
 
-## Web Views Javascript to Native Bridge
+## WebViews Javascript to Native Bridge
 
 The WebView JavaScript to Native bridge allows communication between web content loaded in a WebView and the native iOS application. While powerful for hybrid apps, this bridge introduces significant security risks if not properly implemented.
 
@@ -657,7 +657,7 @@ The procedure for exploiting the functions starts with producing a JavaScript pa
 * If some of the content is loaded insecurely from the Internet over HTTP (mixed content), you can try to implement a MITM attack.
 * You can always perform dynamic instrumentation and inject the JavaScript payload by using frameworks like Frida and the corresponding JavaScript evaluation functions available for the iOS WebViews (`stringByEvaluatingJavaScriptFromString:` for `UIWebView` and `evaluateJavaScript:completionHandler:` for `WKWebView`).
 
-**Example on Web Views Javascript:**
+**Example on WebViews Javascript:**
 
 In order to get the secret from the `Where's My Browser?` app, you can use one of these techniques to inject the following payload that will reveal the secret by writing it to the "result" field of the WebView:
 
