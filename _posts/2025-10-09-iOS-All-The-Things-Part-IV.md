@@ -643,7 +643,7 @@ If you have access to the source code, you can check for the use of UIWebView, w
 
 If you don't have the source code, you can still check if the app uses UIWebView by running a simple command on the binary.
 
- ![image](/assets/img/ios-pentesting/Part-IV/uiwebview.png)
+ ![image](/assets/img/ios-pentesting/Part-IV/uiwebview-tool.png)
 
 **Javascript Bridges**
 
