@@ -176,7 +176,7 @@ e. **Debugging Symbols**: are crucial metadata generated during the compilation 
 
   That output means debugging symbols is enabled.
 
-### Testing Methodology
+**Testing Methodology**
 
 a. **Static Analysis:**
 
@@ -196,7 +196,7 @@ c. **Bypass Techniques:**
   * Use runtime manipulation to override protection logic.
   * Employ kernel-level bypasses for advanced protections.
 
-### Common Vulnerabilities in Code Security
+**Common Vulnerabilities in Code Security**
 
 * **Inconsistent Protection:** Some parts of the app are protected while others are not.
 * **Client-Side Only Checks:** Protection logic that can be easily bypassed.
@@ -604,4 +604,51 @@ d. Extension Security:
   * Use separate app groups for sensitive data.
 
 ## Web Views Javascript to Native Bridge
+
+The WebView JavaScript to Native bridge allows communication between web content loaded in a WebView and the native iOS application. While powerful for hybrid apps, this bridge introduces significant security risks if not properly implemented.
+
+**Types of Webviews:**
+
+a. UIWebView: is deprecated starting on iOS 12 and should not be used. Make sure that either `WKWebView` or `SFSafariViewController` are used to embed web content. In addition to that, JavaScript cannot be disabled for `UIWebView` which is another reason to refrain from using it.
+
+b. WKWebView: was introduced with iOS 8 and is the appropriate choice for extending app functionality, controlling displayed content (i.e., prevent the user from navigating to arbitrary URLs) and customizing.
+
+  * `WKWebView` comes with several security advantages over `UIWebView`:
+    * JavaScript is enabled by default but thanks to the `javaScriptEnabled` property of `WKWebView`, it can be completely disabled, preventing all script injection flaws.
+    * The `JavaScriptCanOpenWindowsAutomatically` can be used to prevent JavaScript from opening new windows, such as pop-ups.
+    * The `hasOnlySecureContent` property can be used to verify resources loaded by the WebView are retrieved through encrypted connections.
+    * `WKWebView` implements out-of-process rendering, so memory corruption bugs won't affect the main app process.
+
+    > **Tip:** A JavaScript Bridge can be enabled when using `WKWebView` and `UIWebView` 
+
+c. SFSafariViewController: is available starting on iOS 9 and should be used to provide a generalized web viewing experience. These WebViews can be easily spotted as they have a characteristic layout which includes the following elements:
+
+  * A read-only address field with a security indicator.
+  * An Action ("Share") button.
+  * A Done button, back and forward navigation buttons, and a "Safari" button to open the page directly in Safari.
+
+    ![image](/assets/img/ios-pentesting/Part-IV/safari.png)
+
+  * There are a couple of things to consider:
+    * JavaScript cannot be disabled in `SFSafariViewController` and this is one of the reasons why the usage of `WKWebView` is recommended when the goal is extending the app's user interface.
+    * `SFSafariViewController` also shares cookies and other website data with Safari.
+    * The user's activity and interaction with a `SFSafariViewController` are not visible to the app, which cannot access AutoFill data, browsing history, or website data.
+    * According to the App Store Review Guidelines, `SFSafariViewController`s may not be hidden or obscured by other views or layers.
+
+**Check vulnerable and deprecated Components:**
+   
+If you have access to the source code, you can check for the use of UIWebView, which Apple has deprecated due to known security vulnerabilities and performance issues. 
+
+ ![image](/assets/img/ios-pentesting/Part-IV/uiwebview.png)
+
+If you don't have the source code, you can still check if the app uses UIWebView by running a simple command on the binary.
+
+ ![image](/assets/img/ios-pentesting/Part-IV/uiwebview.png)
+
+**Javascript Bridges**
+
+From iOS 7 onwards, Apple provided APIs for **communication between JavaScript in a WebView and native** Swift or Objective-C objects. This integration is primarily facilitated through two methods:
+
+* **JSContext**: A JavaScript function is automatically created when a Swift or Objective-C block is linked to an identifier within a `JSContext`. This allows for seamless integration and communication between JavaScript and native code.
+* **JSExport Protocol**: By inheriting the `JSExport` protocol, native properties, instance methods, and class methods can be exposed to JavaScript. This means any changes made in the JavaScript environment are mirrored in the native environment, and vice versa. However, it's essential to ensure that sensitive data is not exposed inadvertently through this method.
 
