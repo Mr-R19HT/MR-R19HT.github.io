@@ -1,5 +1,5 @@
 ---
-date: 2025-10-08 00:02:15
+date: 2025-10-09 06:58:15
 layout: post
 title: iOS All The Things - Part IV
 
@@ -23,7 +23,7 @@ tags:
 2. [iOS Code Security](#ios-code-security)
 3. [Third Party Libraries](#third-party-libraries)
 4. [Inter-Process Communication (IPC)](#inter-process-communication-ipc)
-5. [iOS App Attack Surface](#ios-app-attack-surface)
+5. [Web Views Javascript to Native Bridge](#web-views-javascript-to-native-bridge)
 6. [Conclusion](#conclusion)
 
 ## Intro
@@ -273,6 +273,7 @@ b. Dylib Risks
    We can use frida script to monitor dylib loading:
 
    ```javascript
+  # Real-time interception of library loading
   Interceptor.attach(Module.findExportByName(null, "dlopen"), {
       onEnter: function(args) {
           var path = args[0].readCString();
@@ -284,8 +285,323 @@ b. Dylib Risks
       }
   });
    ```
+  
+c. Library Permissions Analysis
 
+  * Libraries often request more permissions than needed
+  * Can lead to data leakage or privilege escalation
 
+  Checking Library Permissions:
+  
+  ```bash
+  # run command on ios jailbroken device
+  # Extract entitlements from the app
+  ldid -e "Binary-App" > app_entitlements.plist
 
+  # Check embedded framework entitlements
+  ldid -e App/Frameworks/Analytics.framework > analytics_entitlements.plist
+  ```
+
+  Common Over-Privileged Libraries:
+
+  ```xml
+  <!-- Example of excessive entitlements in library -->
+  <key>com.apple.developer.associated-domains</key>
+  <array>
+      <string>applinks:example.com</string>
+      <string>applinks:tracking-library.com</string> <!-- Suspicious -->
+  </array>
+  <key>com.apple.developer.networking.wifi-info</key> <!-- Often unnecessary -->
+  <true/>
+  ```
+
+**Testing Methodology:**
+
+  * Dependency Vulnerability Assessment:
+
+    ```bash
+    # Automated vulnerability scanning
+    dependency-check --project "App" --scan "Podfile.lock"
+
+    # Manual version verification
+    grep -A 10 "Alamofire" Podfile.lock
+    grep -A 10 "Firebase" Podfile.lock
+    ```
+
+  * Dylib Security Analysis:
+
+    ```javascript
+    // Snapshot of currently loaded librarie
+    Process.enumerateModules({
+      onMatch: function(module){
+          if (module.path.includes(".dylib")) {
+              console.log("Loaded Dylib: " + module.name + " at " + module.path);
+          }
+      },
+      onComplete: function(){}
+    });
+    ```
+
+    * Permission Audit:
+
+      ```bash
+      # Compare app vs library entitlements
+      diff app_entitlements.plist analytics_entitlements.plist
+      ```
+
+**Remediation Recommendations**
+
+* For Developers:
+    * Regular Dependency Updates.
+    * Dylib Security:
+        * Use @loader_path instead of @executable_path.
+        * Validate dylib code signatures at runtime.
+        * Restrict dylib loading to app bundle only.
+    * Permission Minimization:
+        * Review each library's entitlement requests.
+        * Remove unnecessary permissions.
+        * Use app groups selectively.
+
+* For Penetration Testers:
+    * Always include dependency vulnerability scanning.
+    * Verify dylib loading paths and signatures.
+    * Audit library permissions against functionality.
+    * Test for runtime library manipulation.
+
+> **Important Link:** special for [Dylib](https://book.hacktricks.wiki/en/macos-hardening/macos-security-and-privilege-escalation/macos-dyld-hijacking-and-dyld_insert_libraries.html)
+
+## Inter-Process Communication (IPC)
+
+Inter-Process Communication (IPC) allows iOS applications to exchange data and communicate with other apps, extensions, and system services. While IPC enables powerful functionality, it also creates significant security risks that penetration testers must evaluate.
+
+**Types of IPC Mechanisms in iOS:**
+
+a. URL Schemes:
+  
+  * Allow apps to communicate via custom URLs.
+  * Can be exploited for unauthorized data access or actions.
+  * How They Work:
+    * Apps register a custom URL scheme (e.g., `myapp://`) in their `Info.plist`:
+
+    ```xml
+       <key>CFBundleURLTypes</key>
+       <array>
+          <dict>
+              <key>CFBundleURLSchemes</key>
+               <array>
+                  <string>myapp</string>
+               </array>
+          </dict>
+       </array>
+     ```
     
+    * When a user clicks a link like `myapp://profile/123`, iOS checks if any app has registered `myapp://` and opens it.  
+
+b. Universal Links:
+
+  * A deeplink in mobile application is like a special link that takes you directly to a specific part of a mobile app instead of a website. This means you can easily switch between apps or go from a website to an app without having to click a lot of buttons. It makes it quicker and easier to find what you’re looking for in the app.
+  * Can be hijacked if not properly validated.
+  * How They Work:
+      * Uses standard HTTPS links (e.g., `https://example.com/profile/123`) instead of custom schemes.
+      * Server Setup: Host an `apple-app-site-association` (AASA) JSON file at `https://example.com/.well-known/apple-app-site-association`.
+
+        ```json
+         {
+           "applinks": {
+               "apps": [],
+                 "details": [
+                       {
+                           "appID": "TEAMID.com.example.app",
+                           "paths": ["/profile/*", "/settings"]
+                       }
+                 ]  
+             }
+         }
+        ```
+        
+      * App Setup: Enable "Associated Domains" in Xcode and add
+   
+        ```text
+             applinks:example.com
+        ```
+
+        **URL Schemes vs Universal Links:**
+        
+        | Feature             | URL Schemes (`myapp://`)    | Universal Links (`https://`) |
+        | ------------------- | ----------------------------| -----------------------------|
+        | **Security**        | No ownership check          | Verified via AASA file     |
+        | **User Experience** | Shows "Open in App?" prompt | Opens silently             |
+        | **Fallback**        | Fails if app not installed  | Opens in Safari            |
+        | **Implementation**  | Just `Info.plist`           | Needs server config        |
+        | **iOS Support**     | All versions                | iOS 9+                     |
+        | **Phishing Risk**   | High (hijackable)           | Low (secure)               |
+
+        **How to test url schemes and universal links**
+        
+        * Get all url schemes and universal links.
+
+          ```bash
+          # go to file and search on "CFBundleURLTypes" or "LSApplicationQueriesSchemes" to get url schemes
+          ipsw plist info.plist > info.plist.json
+
+          # search on "com.apple.developer.associated-domain" to get universal links
+          ipsw macho info Binary-App
+          ```
+   
+          ![image](/assets/img/ios-pentesting/Part-IV/url-schemes.png)
+   
+          ![image](/assets/img/ios-pentesting/Part-IV/universal-links.png) 
+ 
+        * Another way to get all links.
+
+          ```bash
+          strings Binary-App | grep "://"
+          ```
+   
+          ![image](/assets/img/ios-pentesting/Part-IV/links.png) 
+       
+        * Use uiopen on ios jailbroken device to check links.
+
+          ```bash
+          # Test Url Schemes Handling
+          uiopen "myapp://profile/123"
+
+          # Check for sensitive data exposure
+          uiopen "myapp://get-token"
+          uiopen "myapp://export-database"
+          ```
+       
+        * We can use Frida instead of uiopen to do same thing:
+            * To intercept openurl function
+              
+             ```javascript
+             function openURL(url) {
+              var UIApplication = ObjC.classes.UIApplication.sharedApplication();
+              var nsURL = ObjC.classes.NSURL.URLWithString_(url);
+              return UIApplication.openURL_(nsURL);
+             }
+             ```
+            * Request the url schemas
+         
+            ![image](/assets/img/ios-pentesting/Part-IV/openurl.png) 
+
+
+            * Can use frida-trace to get the methods and classes that using openurl, run it then go to ssh connection on device and run the url schema using uiopen to trace exactly what is method and class use that url schema.
+
+              ```bash
+              frida-trace -U -m '*[* *openURL*]' -p 1234
+              ```
+       
+              ![image](/assets/img/ios-pentesting/Part-IV/trace.png)
+              
+c. Keychain Sharing:
+
+  * The iOS Keychain is a secure storage system for sensitive information like passwords, credit card details, and cryptographic keys, accessible to apps and the user.
+  * Allows apps from same developer to share sensitive data.
+  * Implemented through Keychain Access Groups.
+
+    ![image](/assets/img/ios-pentesting/Part-IV/keychain.png)
+    
+  * Keychain Data Protection Classes
+
+    ![image](/assets/img/ios-pentesting/Part-IV/keychain-classes.png)
+  
+  * To know the ios app use keychain or not, check keychain api includes the following main operations:
+      * secitemadd
+      * secitemupdate
+      * secitemdelete
+      * secitemdelete
+
+     ```bash
+     strings Binary-app | grep "SecItem"
+     ```
+
+     ![image](/assets/img/ios-pentesting/Part-IV/ops-keychain.png)
+
+  * Keychain data extraction
+
+    ```bash
+    // Using Objection to dump keychain
+    ios keychain dump
+
+    // Using Frida for keychain analysis
+    ObjC.classes.SecItem.copyMatching.implementation = function(query) {
+    console.log("[+] Keychain query: " + query);
+    return this.self.copyMatching(query);
+    };
+    ```
+
+d. XPC Services:
+
+  * Lightweight inter-process communication.
+  * Used for app-to-app and app-to-system service communication.
+
+e. App Extensions:
+  
+  * Today Widgets, Share Extensions, Action Extensions.
+  * Run in separate processes but share data with host app.
+
+f. UIActivityViewController:
+
+  * Shares data between apps through system-provided activities.
+  * Can leak sensitive information to unauthorized apps.
+
+g. App Groups:
+
+  * Allows multiple apps or extensions to share container storage.
+  * Uses shared file containers for data exchange.
+
+**Common IPC Vulnerabilities:**
+
+a. URL Scheme Hijacking:
+
+  * Unprotected URL schemes allowing any app to trigger actions.
+  * Lack of input validation in URL parameters.
+  * Sensitive data exposure through callback URLs.
+
+b. Insecure App Group Sharing:
+
+  * World-readable shared containers.
+  * Lack of encryption in shared files.
+  * Improper access controls.
+
+c. Keychain Access Issues:
+
+  * Overly permissive keychain access groups.
+  * Weak keychain item protection classes.
+  * Failure to use appropriate accessibility settings.
+
+d. Extension Vulnerabilities:
+
+  * Extensions with excessive permissions.
+  * Data leakage between host app and extension.
+  * Inadequate sandboxing.
+
+**Security Best Practices**
+
+a. URL Scheme Protection:
+
+  * Validate incoming URL parameters.
+  * Implement custom URL scheme authentication.
+  * Restrict sensitive actions to authenticated users.
+
+b. App Group Security:
+
+  * Encrypt sensitive data in shared containers.
+  * Implement proper file permissions.
+  * Use separate app groups for different sensitivity levels.
+
+c. Keychain Hardening:
+
+  * Use appropriate protection classes (kSecAttrAccessibleWhenUnlocked).
+  * Implement proper access control settings.
+  * Regularly audit keychain usage.
+
+d. Extension Security:
+
+  * Minimize extension permissions.
+  * Implement data sanitization.
+  * Use separate app groups for sensitive data.
+
+## Web Views Javascript to Native Bridge
 
