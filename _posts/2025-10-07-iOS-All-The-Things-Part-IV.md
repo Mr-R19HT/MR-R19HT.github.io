@@ -1,5 +1,5 @@
 ---
-date: 2025-10-09 06:58:15
+date: 2025-10-09 07:13:15
 layout: post
 title: iOS All The Things - Part IV
 
@@ -273,7 +273,7 @@ b. Dylib Risks
    We can use frida script to monitor dylib loading:
 
    ```javascript
-  # Real-time interception of library loading
+  // Real-time interception of library loading
   Interceptor.attach(Module.findExportByName(null, "dlopen"), {
       onEnter: function(args) {
           var path = args[0].readCString();
@@ -342,12 +342,12 @@ c. Library Permissions Analysis
     });
     ```
 
-    * Permission Audit:
+  * Permission Audit:
 
-      ```bash
-      # Compare app vs library entitlements
-      diff app_entitlements.plist analytics_entitlements.plist
-      ```
+    ```bash
+    # Compare app vs library entitlements
+    diff app_entitlements.plist analytics_entitlements.plist
+    ```
 
 **Remediation Recommendations**
 
