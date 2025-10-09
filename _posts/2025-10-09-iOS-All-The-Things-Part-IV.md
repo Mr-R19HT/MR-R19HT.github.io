@@ -652,3 +652,52 @@ From iOS 7 onwards, Apple provided APIs for **communication between JavaScript i
 * **JSContext**: A JavaScript function is automatically created when a Swift or Objective-C block is linked to an identifier within a `JSContext`. This allows for seamless integration and communication between JavaScript and native code.
 * **JSExport Protocol**: By inheriting the `JSExport` protocol, native properties, instance methods, and class methods can be exposed to JavaScript. This means any changes made in the JavaScript environment are mirrored in the native environment, and vice versa. However, it's essential to ensure that sensitive data is not exposed inadvertently through this method.
 
+The procedure for exploiting the functions starts with producing a JavaScript payload and injecting it into the file that the app is requesting. The injection can be accomplished via various techniques, for example:
+
+* If some of the content is loaded insecurely from the Internet over HTTP (mixed content), you can try to implement a MITM attack.
+* You can always perform dynamic instrumentation and inject the JavaScript payload by using frameworks like Frida and the corresponding JavaScript evaluation functions available for the iOS WebViews (`stringByEvaluatingJavaScriptFromString:` for `UIWebView` and `evaluateJavaScript:completionHandler:` for `WKWebView`).
+
+**Example on Web Views Javascript:**
+
+In order to get the secret from the `Where's My Browser?` app, you can use one of these techniques to inject the following payload that will reveal the secret by writing it to the "result" field of the WebView:
+
+```javascript
+/**
+ * JavaScript Bridge Callback Function
+ * This function is called by native iOS code to return data to the web page
+ * 
+ * @param {string} name: The name/identifier of the callback or method being called
+ * @param {string} value: The data/value returned from the native iOS side
+ */
+function javascriptBridgeCallBack(name, value) {
+    // Update the HTML element with ID "result" to display the returned value
+    // This is typically used to show the result of a native operation on the web page
+    document.getElementById("result").innerHTML = value;
+};
+
+/**
+ * Send a message from JavaScript to the native iOS WKWebView
+ * This uses the WebKit message handler system to communicate with the iOS app
+ */
+window.webkit.messageHandlers.javaScriptBridge.postMessage(["getSecret"]);
+
+// BREAKDOWN:
+// window.webkit.messageHandlers: iOS WebKit's bridge for JavaScript-to-native communication
+// .javaScriptBridge: The name of the message handler registered by the iOS app
+// .postMessage(): Method to send data from JavaScript to native code
+// ["getSecret"]: Array containing the command/message being sent to native code
+
+/**
+ * FLOW EXPLANATION:
+ * 1. JavaScript sends "getSecret" command to iOS native code via postMessage()
+ * 2. iOS app receives the message through WKScriptMessageHandler
+ * 3. iOS processes the request (e.g., retrieves secret data)
+ * 4. iOS calls back to JavaScript using javascriptBridgeCallBack() function
+ * 5. The callback function updates the webpage with the result
+ */
+```
+
+ ![image](/assets/img/ios-pentesting/Part-IV/webview-app.png)
+
+## Conclusion
+
