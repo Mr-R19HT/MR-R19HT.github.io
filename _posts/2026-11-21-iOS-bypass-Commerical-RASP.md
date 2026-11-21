@@ -1,5 +1,5 @@
 ---
-date: 2026-11-21 15:56:10
+date: 2026-11-21 16:10:10
 layout: post
 title: Bypass iOS Commercial RASP
 
@@ -16,3 +16,11 @@ tags:
 ---
 
 # Agenda of Bypass iOS Commercial RASP:
+1. [Intro](#intro)
+2. [Define RASP](#define-rasp)
+3. [How RASP Works](#how-rasp-works)
+4. [Bypass Commercial RASP](#bypass-commercial-rasp)
+5. [Conclusion](#conclusion)
+
+## Intro
+testing
