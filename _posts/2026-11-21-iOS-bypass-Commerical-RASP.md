@@ -1,7 +1,7 @@
 ---
-date: 2026-11-21 15:52:10
+date: 2026-11-21 15:56:10
 layout: post
-title: iOS All The Things - Part IV
+title: Bypass iOS Commercial RASP
 
 description: 
 image: assets/img/ios-pentesting/bypass-commerical-rasp/phinks.jpeg
@@ -11,7 +11,7 @@ tags:
   - iOS Pentesting
   - iOS Penetration Testing
   - iOS RASP
-  - iOS code security
+  - RASP security
   - Commercial RASP 
 ---
 
