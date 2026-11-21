@@ -4,8 +4,8 @@ layout: post
 title: Bypass iOS Commercial RASP
 
 description: 
-image: assets/img/ios-pentesting/bypass-commerical-rasp/phinks.jpeg
-optimized_image: assets/img/ios-pentesting/bypass-commerical-rasp/phinks.jpeg
+image: assets/img/ios-pentesting/bypass-commerical-rasp/phinks2.jpeg
+optimized_image: assets/img/ios-pentesting/bypass-commerical-rasp/phinks2.jpeg
 category: blog
 tags:
   - iOS Pentesting
