@@ -19,8 +19,9 @@ tags:
 1. [Intro](#intro)
 2. [Define RASP](#define-rasp)
 3. [How RASP Works](#how-rasp-works)
-4. [Bypass Methodology](#bypass-methodology)
-5. [Conclusion](#conclusion)
+4. [Types of RASP](#types-of-rasp)
+5. [Bypass Methodology](#bypass-methodology)
+6. [Conclusion](#conclusion)
 
 ## Intro
 In this write-up, I'll walk through my analysis of a commercial iOS RASP implementation, explore how its protection mechanisms work, identify the techniques used to detect a compromised environment, and demonstrate the approach I followed to bypass these protections.
